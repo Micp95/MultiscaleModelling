@@ -66,9 +66,12 @@ namespace MultiscaleModelling.Simulation
                 if (neighbourhood.Any())
                 {
                     var orderedNeighbourhood = neighbourhood.GroupBy(s => s).Select(g => new KeyValuePair<Node,int>(g.First(),g.Count())).OrderByDescending(p=>p.Value).ToList();
-                    var winner = orderedNeighbourhood.FirstOrDefault().Key;
+                    var winnerValue = orderedNeighbourhood.FirstOrDefault().Value;
 
-                    node = winner;
+                    var winners = orderedNeighbourhood.Where(p=>p.Value== winnerValue).ToList();
+                    var randomWinner = winners[_random.Next(winners.Count)].Key;
+
+                    node = randomWinner;
                 }
             }
 
