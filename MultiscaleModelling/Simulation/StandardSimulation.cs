@@ -16,6 +16,8 @@ namespace MultiscaleModelling.Simulation
         Configuration _configuration;
         Random _random;
         List<Grain> _grains;
+        private bool _endSimulation;
+        private int _currentGrainId;
 
         public Bitmap GetBitmap()
         {
@@ -29,6 +31,7 @@ namespace MultiscaleModelling.Simulation
             _configuration = config;
             _mapController = new MapController(config.Width, config.Height);
 
+            _currentGrainId = 100;
             int grainsToGenerate = config.NumberOfGrains;
             while(grainsToGenerate > 0)
             {
@@ -43,7 +46,8 @@ namespace MultiscaleModelling.Simulation
 
         public void NextStep()
         {
-            for(int x = 1; x <= _configuration.Width; x++)
+            _endSimulation = true;
+            for (int x = 1; x <= _configuration.Width; x++)
             {
                 for (int y = 1; y <= _configuration.Height; y++)
                 {
@@ -53,13 +57,14 @@ namespace MultiscaleModelling.Simulation
             _mapController.Commit();
         }
 
-
         private void ProcessCoordinate(int x, int y)
         {
             var node = _mapController.GetNode(x, y);
 
             if (node.Type == TypeEnum.Empty)
             {
+                _endSimulation = false;
+
                 var neighbourhood = _mapController.GetNeighbourhoods(x, y, _configuration.Neighbourhood);
 
                 neighbourhood = neighbourhood.Where(k => k.Type == TypeEnum.Grain).ToList();
@@ -104,7 +109,7 @@ namespace MultiscaleModelling.Simulation
         }
         private Grain GetRandomGrain()
         {
-            int id = _random.Next();
+            int id = _currentGrainId++;
             Color color = Color.FromArgb(_random.Next(2,254), _random.Next(2, 254), _random.Next(2, 254));
 
             return new Grain()
@@ -114,7 +119,21 @@ namespace MultiscaleModelling.Simulation
             };
         }
 
+        public void ExportToFile(FileTypeEnum type, string fileName)
+        {
+            _mapController.ExportToFile(fileName, type);
+        }
 
+        public void ImportFromFile(FileTypeEnum type, string fileName)
+        {
+            if (_mapController == null)
+                _mapController = new MapController();
+            _mapController.ImportFromFile(fileName, type);
+        }
 
+        public bool IsEndSimulation()
+        {
+            return _endSimulation;
+        }
     }
 }

@@ -25,6 +25,12 @@ namespace MultiscaleModelling
             comboBoxBC.SelectedIndex = 0;
             comboBoxNeighbourhood.SelectedIndex = 0;
             _isStartedSimulation = false;
+
+            _currentSimullation = new StandardSimulation();
+            ChangeEnableGrowOptions(true);
+            ChangeEnableGrowButtons(true);
+
+            exportToolStripMenuItem.Enabled = false;
         }
 
         private Configuration GetConfiguration()
@@ -42,8 +48,7 @@ namespace MultiscaleModelling
 
         private void StartStandatdSimulation()
         {
-            _currentSimullation = new StandardSimulation();
-
+            ChangeEnableGrowOptions(false);
             var config = GetConfiguration();
 
             _currentSimullation.Initialize(config);
@@ -53,6 +58,12 @@ namespace MultiscaleModelling
         {
             if (map != null)
                 pictureBox1.Image = ResizeBitmap(map, pictureBox1.Width, pictureBox1.Height);
+        }
+
+        private void RenderStep()
+        {
+            var map = _currentSimullation.GetBitmap();
+            Render(map);
         }
         private Bitmap ResizeBitmap(Bitmap b, int nWidth, int nHeight)
         {
@@ -65,6 +76,20 @@ namespace MultiscaleModelling
             return result;
         }
 
+        private void ChangeEnableGrowOptions(bool enable)
+        {
+            numericUpDownWidth.Enabled = enable;
+            numericUpDownHeight.Enabled = enable;
+            numericUpDownNumberOfGrain.Enabled = enable;
+            comboBoxNeighbourhood.Enabled = enable;
+            comboBoxBC.Enabled = enable;
+        }
+
+        private void ChangeEnableGrowButtons(bool enable)
+        {
+            buttonStart.Enabled = enable;
+            buttonStop.Enabled = enable;
+        }
 
         private void label3_Click(object sender, EventArgs e)
         {
@@ -92,7 +117,12 @@ namespace MultiscaleModelling
 
         private void buttonRestart_Click(object sender, EventArgs e)
         {
-            StartStandatdSimulation();
+            _isStartedSimulation = false;
+            timer1.Enabled = false;
+            exportToolStripMenuItem.Enabled = false;
+
+            ChangeEnableGrowOptions(true);
+            ChangeEnableGrowButtons(true);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -103,8 +133,80 @@ namespace MultiscaleModelling
         private void timer1_Tick(object sender, EventArgs e)
         {
             _currentSimullation.NextStep();
-            var map =_currentSimullation.GetBitmap();
-            Render(map);
+            RenderStep();
+            if (_currentSimullation.IsEndSimulation())
+            {
+                ChangeEnableGrowButtons(false);
+                exportToolStripMenuItem.Enabled = true;
+                timer1.Enabled = false;
+            }
+        }
+
+
+        private void comboBoxBC_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBoxNeighbourhood_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void importToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "Structure Files (*.bmp, *.txt)|*.bmp; *.txt";
+            openFileDialog1.Title = "Select a structure file";
+
+
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                var name = openFileDialog1.FileName;
+
+                if (name.Contains(".txt"))
+                    _currentSimullation.ImportFromFile(FileTypeEnum.Text, name);
+                else if (name.Contains(".bmp"))
+                    _currentSimullation.ImportFromFile(FileTypeEnum.Bmp, name);
+
+                _isStartedSimulation = true;
+                RenderStep();
+
+                ChangeEnableGrowOptions(false);
+                ChangeEnableGrowButtons(false);
+                exportToolStripMenuItem.Enabled = true;
+            }
+        }
+
+        private void toTextToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileGialog = new SaveFileDialog();
+            saveFileGialog.Filter = "Structure Files (*.txt)|*.txt";
+            saveFileGialog.Title = "Select path for file";
+
+
+            if (saveFileGialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                var name = saveFileGialog.FileName;
+                _currentSimullation.ExportToFile(FileTypeEnum.Text, name);
+
+            }
+        }
+
+        private void toBitmapToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileGialog = new SaveFileDialog();
+            saveFileGialog.Filter = "Structure Files (*.bmp)|*.bmp";
+            saveFileGialog.Title = "Select path for file";
+
+
+            if (saveFileGialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                var name = saveFileGialog.FileName;
+                _currentSimullation.ExportToFile(FileTypeEnum.Bmp, name);
+
+            }
         }
     }
 }

@@ -9,9 +9,13 @@ namespace MultiscaleModelling.Models
     public class Map
     {
         private Node[,] _nodes;
+        private int _width;
+        private int _height;
         public Map(int width, int height)
         {
             _nodes = new Node[width, height];
+            _width = width;
+            _height = height;
         }
 
         public Node GetNode(int x, int y)
@@ -23,6 +27,7 @@ namespace MultiscaleModelling.Models
             _nodes[x, y] = node;
         }
 
-
+        public int Width { get { return _width; } }
+        public int Height { get { return _height; } }
     }
 }

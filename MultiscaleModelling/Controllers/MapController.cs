@@ -1,4 +1,5 @@
-﻿using MultiscaleModelling.Models;
+﻿using MultiscaleModelling.Helpers;
+using MultiscaleModelling.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,6 +20,11 @@ namespace MultiscaleModelling.Controllers
         private Map _previousMap;
         private Map _currentMap;
 
+
+        public MapController()
+        {
+
+        }
         public MapController(int width, int height)
         {
             //add border nodes
@@ -90,6 +96,48 @@ namespace MultiscaleModelling.Controllers
             return bitmap;
         }
 
+
+        public void ImportFromFile(string name,FileTypeEnum type)
+        {
+            switch (type)
+            {
+                case FileTypeEnum.Bmp:
+                    var mapper = GetColorMapper();
+                    _currentMap = FileHelper.ImportFromBmp(name, mapper);
+                    break;
+                case FileTypeEnum.Text:
+                    _currentMap = FileHelper.ImportFromTxt(name);
+                    break;
+            }
+
+            _width = _currentMap.Width;
+            _height = _currentMap.Height;
+
+            Commit();
+        }
+        public void ExportToFile(string name, FileTypeEnum type)
+        {
+            switch (type)
+            {
+                case FileTypeEnum.Bmp:
+                    FileHelper.ExportToBmp(GetBitmap(),name);
+                    break;
+                case FileTypeEnum.Text:
+                    FileHelper.ExportToTxt(_previousMap, name);
+                    break;
+            }
+        }
+
+
+        private Dictionary<Color, TypeEnum> GetColorMapper()
+        {
+            var result = new Dictionary<Color, TypeEnum>();
+
+            result.Add(_borderColor, TypeEnum.Border);
+            result.Add(_emptyColor, TypeEnum.Empty);
+
+            return result;
+        }
         private void CreteNewMap()
         {
             _currentMap = new Map(_width, _height);

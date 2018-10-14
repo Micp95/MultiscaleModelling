@@ -14,5 +14,9 @@ namespace MultiscaleModelling.Interfaces
         void NextStep();
         Bitmap GetBitmap();
 
+        void ExportToFile(FileTypeEnum type, string fileName);
+        void ImportFromFile(FileTypeEnum type, string fileName);
+
+        bool IsEndSimulation();
     }
 }
