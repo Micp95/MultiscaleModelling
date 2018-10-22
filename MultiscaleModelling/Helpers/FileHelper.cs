@@ -32,7 +32,7 @@ namespace MultiscaleModelling.Helpers
             }
         }
 
-        public static Map ImportFromBmp(string fileName,Dictionary<Color,TypeEnum> specialColors)
+        public static Map ImportFromBmp(string fileName,Dictionary<TypeEnum,Color> specialColors)
         {
             var nodeList = new List<Node>();
             var bitmap = new Bitmap(fileName);
@@ -54,10 +54,15 @@ namespace MultiscaleModelling.Helpers
                     };
 
                     //is border/empty etc.
-                    if (specialColors.Any(k => k.Key.ToArgb() == pixel.ToArgb()))
+                    if ( x== 0 || y ==0|| x == width || y == height)
                     {
-                        newNode.Type = specialColors.FirstOrDefault(k => k.Key.ToArgb() == pixel.ToArgb()).Value;
-                    }else//is grain
+                        newNode.Type = TypeEnum.Border;
+                    }
+                    else if (specialColors.Any(k => k.Value.ToArgb() == pixel.ToArgb()))
+                    {
+                        newNode.Type = specialColors.FirstOrDefault(k => k.Value.ToArgb() == pixel.ToArgb() && k.Key!= TypeEnum.Border).Key;
+                    }
+                    else//is grain
                     {
                         newNode.Type = TypeEnum.Grain;
 
@@ -68,6 +73,7 @@ namespace MultiscaleModelling.Helpers
                         }else
                         {
                             newNode.Id = currentGrainId++;
+                            nodeList.Add(newNode);
                         }
                     }
 
@@ -77,7 +83,7 @@ namespace MultiscaleModelling.Helpers
             }
             return rerMap;
         }
-        public static Map ImportFromTxt(string fileName)
+        public static Map ImportFromTxt(string fileName, Dictionary<TypeEnum,Color> specialColors)
         {
             var nodeList = new List<Node>();
             Map resMap = null;
@@ -107,15 +113,22 @@ namespace MultiscaleModelling.Helpers
                         Id = nodeConfigNumbers[3],
                     };
 
-                    var savedNode = nodeList.FirstOrDefault(k => k.Id == newNode.Id);
-                    if(savedNode == null)
+                    if(newNode.Type == TypeEnum.Grain)
                     {
-                        var randomColor = Color.FromArgb(_random.Next(2, 254), _random.Next(2, 254), _random.Next(2, 254));
-                        newNode.Color = randomColor;
-                        nodeList.Add(newNode);
-                    }else
+                        var savedNode = nodeList.FirstOrDefault(k => k.Id == newNode.Id);
+                        if(savedNode == null)
+                        {
+                            var randomColor = Color.FromArgb(_random.Next(2, 254), _random.Next(2, 254), _random.Next(2, 254));
+                            newNode.Color = randomColor;
+                            nodeList.Add(newNode);
+                        }else
+                        {
+                            newNode.Color = savedNode.Color;
+                        }
+                    }
+                    else
                     {
-                        newNode.Color = savedNode.Color;
+                        newNode.Color = specialColors[newNode.Type];
                     }
 
                     resMap.SetNode(newNode, x, y);

@@ -24,11 +24,13 @@ namespace MultiscaleModelling
 
             comboBoxBC.SelectedIndex = 0;
             comboBoxNeighbourhood.SelectedIndex = 0;
+            comboBoxTypeOfInclusion.SelectedIndex = 0;
             _isStartedSimulation = false;
 
             _currentSimullation = new StandardSimulation();
             ChangeEnableGrowOptions(true);
             ChangeEnableGrowButtons(true);
+            ChangeEnableInclusionsOptions(true);
 
             exportToolStripMenuItem.Enabled = false;
         }
@@ -46,12 +48,26 @@ namespace MultiscaleModelling
             };
         }
 
+        private ConfigurationInclusions GetConfigurationInclusions()
+        {
+
+            return new ConfigurationInclusions()
+            {
+                InclusionType = (InclusionType)comboBoxTypeOfInclusion.SelectedIndex,
+                NumberOfInclusions = (int)numericAmountOfInclusions.Value,
+                SizeOfInclusions = (int)numericSizeOfInclusions.Value
+            };
+        }
+
         private void StartStandatdSimulation()
         {
             ChangeEnableGrowOptions(false);
+            ChangeEnableInclusionsOptions(false);
+
             var config = GetConfiguration();
 
             _currentSimullation.Initialize(config);
+            _currentSimullation.SeedGrains(config);
             _isStartedSimulation = true;
         }
         private void Render(Bitmap map)
@@ -84,7 +100,13 @@ namespace MultiscaleModelling
             comboBoxNeighbourhood.Enabled = enable;
             comboBoxBC.Enabled = enable;
         }
-
+        private void ChangeEnableInclusionsOptions(bool enable)
+        {
+            numericAmountOfInclusions.Enabled = enable;
+            numericSizeOfInclusions.Enabled = enable;
+            comboBoxTypeOfInclusion.Enabled = enable;
+            buttonAddInclusions.Enabled = enable;
+        }
         private void ChangeEnableGrowButtons(bool enable)
         {
             buttonStart.Enabled = enable;
@@ -117,10 +139,13 @@ namespace MultiscaleModelling
 
         private void buttonRestart_Click(object sender, EventArgs e)
         {
+            _currentSimullation.Restart();
+            RenderStep();
             _isStartedSimulation = false;
             timer1.Enabled = false;
             exportToolStripMenuItem.Enabled = false;
 
+            ChangeEnableInclusionsOptions(true);
             ChangeEnableGrowOptions(true);
             ChangeEnableGrowButtons(true);
         }
@@ -137,6 +162,7 @@ namespace MultiscaleModelling
             if (_currentSimullation.IsEndSimulation())
             {
                 ChangeEnableGrowButtons(false);
+                ChangeEnableInclusionsOptions(true);
                 exportToolStripMenuItem.Enabled = true;
                 timer1.Enabled = false;
             }
@@ -175,6 +201,7 @@ namespace MultiscaleModelling
 
                 ChangeEnableGrowOptions(false);
                 ChangeEnableGrowButtons(false);
+                ChangeEnableInclusionsOptions(true);
                 exportToolStripMenuItem.Enabled = true;
             }
         }
@@ -207,6 +234,18 @@ namespace MultiscaleModelling
                 _currentSimullation.ExportToFile(FileTypeEnum.Bmp, name);
 
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (_currentSimullation.IsMapEmpty())
+            {
+                var globalConfig = GetConfiguration();
+                _currentSimullation.Initialize(globalConfig);
+            }
+            var config = GetConfigurationInclusions();
+            _currentSimullation.AddInclusions(config);
+            RenderStep();
         }
     }
 }

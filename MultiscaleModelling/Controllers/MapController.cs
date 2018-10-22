@@ -13,6 +13,7 @@ namespace MultiscaleModelling.Controllers
     {
         private static Color _borderColor = Color.Black;
         private static Color _emptyColor = Color.White;
+        private static Color _inclusionColor = Color.Black;
 
         private int _width;
         private int _height;
@@ -43,6 +44,17 @@ namespace MultiscaleModelling.Controllers
             CreteNewMap();
         }
 
+        public void CopyMap()
+        {
+            for (int x = 0; x < _width; x++)
+            {
+                for (int y = 0; y < _height; y++)
+                {
+                    _currentMap.SetNode(_previousMap.GetNode(x, y),x,y);
+                }
+            }
+        }
+
         public void Rollback()
         {
             CreteNewMap();
@@ -69,12 +81,15 @@ namespace MultiscaleModelling.Controllers
 
         public void SetNode(int x, int y, Node node)
         {
-            _currentMap.SetNode(node, x, y);
+            if(x >= 0 && y >= 0 && x < _width && y < _height)
+                _currentMap.SetNode(node, x, y);
         }
 
         public Node GetCurrentNode (int x,int y)
         {
-            return _currentMap.GetNode(x, y);
+            if (x < _width && y < _height)
+                return _currentMap.GetNode(x, y);
+            return null;
         }
 
         public Bitmap GetBitmap()
@@ -85,12 +100,14 @@ namespace MultiscaleModelling.Controllers
                 for (int y = 0; y < _height; y++)
                 {
                     var node = _previousMap.GetNode(x, y);
-                    if (node.Type == TypeEnum.Empty)
+                    if (node == null || node.Type == TypeEnum.Empty)
                         bitmap.SetPixel(x, y, _emptyColor);
                     else if(node.Type == TypeEnum.Grain)
                         bitmap.SetPixel(x, y, _previousMap.GetNode(x, y).Color);
                     else if(node.Type == TypeEnum.Border)
                         bitmap.SetPixel(x, y, _borderColor);
+                    else if (node.Type == TypeEnum.Inclusion)
+                        bitmap.SetPixel(x, y, _inclusionColor);
                 }
             }
             return bitmap;
@@ -99,14 +116,14 @@ namespace MultiscaleModelling.Controllers
 
         public void ImportFromFile(string name,FileTypeEnum type)
         {
+            var mapper = GetColorMapper();
             switch (type)
             {
                 case FileTypeEnum.Bmp:
-                    var mapper = GetColorMapper();
                     _currentMap = FileHelper.ImportFromBmp(name, mapper);
                     break;
                 case FileTypeEnum.Text:
-                    _currentMap = FileHelper.ImportFromTxt(name);
+                    _currentMap = FileHelper.ImportFromTxt(name, mapper);
                     break;
             }
 
@@ -129,12 +146,13 @@ namespace MultiscaleModelling.Controllers
         }
 
 
-        private Dictionary<Color, TypeEnum> GetColorMapper()
+        private Dictionary<TypeEnum,Color> GetColorMapper()
         {
-            var result = new Dictionary<Color, TypeEnum>();
+            var result = new Dictionary<TypeEnum,Color>();
 
-            result.Add(_borderColor, TypeEnum.Border);
-            result.Add(_emptyColor, TypeEnum.Empty);
+            result.Add(TypeEnum.Border,_borderColor );
+            result.Add(TypeEnum.Inclusion,_inclusionColor);
+            result.Add(TypeEnum.Empty,_emptyColor);
 
             return result;
         }
@@ -142,7 +160,6 @@ namespace MultiscaleModelling.Controllers
         {
             _currentMap = new Map(_width, _height);
             CreateEmptyMap();
-            AddBitmapBorder();
         }
         private void CreateEmptyMap()
         {
@@ -150,49 +167,19 @@ namespace MultiscaleModelling.Controllers
             {
                 for (int y = 0; y < _height; y++)
                 {
+                    TypeEnum type = TypeEnum.Empty;
+                    if (x == 0 || y == 0 || x == _width - 1 || y == _height - 1)
+                        type = TypeEnum.Border;
                     _currentMap.SetNode(new Node()
                     {
                         X = x,
                         Y = y,
-                        Type = TypeEnum.Empty
+                        Type = type
                     }, x, y);
                 }
             }
         }
-        private void AddBitmapBorder()
-        {
-            for(int k = 0; k < _width; k++)
-            {
-                _currentMap.SetNode(new Node()
-                {
-                    X = k,
-                    Y = 0,
-                    Type = TypeEnum.Border
-                },k,0);
-                _currentMap.SetNode(new Node()
-                {
-                    X = k,
-                    Y = _height - 1,
-                    Type = TypeEnum.Border
-                }, k, _height - 1);
-            }
 
-            for (int k = 0; k < _height; k++)
-            {
-                _currentMap.SetNode(new Node()
-                {
-                    X = 0,
-                    Y = k,
-                    Type = TypeEnum.Border
-                }, 0, k);
-                _currentMap.SetNode(new Node()
-                {
-                    X = _width - 1,
-                    Y = k,
-                    Type = TypeEnum.Border
-                }, _width - 1, k);
-            }
-        }
         private List<Node> GetMooreNeighbourhoods(int x, int y)
         {
             List<Node> neighbourhoods = new List<Node>();

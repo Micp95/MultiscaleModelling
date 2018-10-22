@@ -12,10 +12,14 @@ namespace MultiscaleModelling.Interfaces
     {
         void Initialize(Configuration config);
         void NextStep();
+        void Restart();
         Bitmap GetBitmap();
 
         void ExportToFile(FileTypeEnum type, string fileName);
         void ImportFromFile(FileTypeEnum type, string fileName);
+        void AddInclusions(ConfigurationInclusions config);
+        void SeedGrains(Configuration config);
+        bool IsMapEmpty();
 
         bool IsEndSimulation();
     }

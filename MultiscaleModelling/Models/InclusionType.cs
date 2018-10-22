@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace MultiscaleModelling.Models
 {
-    public enum TypeEnum
+    public enum InclusionType
     {
-        Empty=0,
-        Border = 1,
-        Grain = 2,
-        Inclusion = 3
+        Circle = 0,
+        Square = 1
     }
 }
