@@ -60,6 +60,16 @@
             this.comboBoxTypeOfInclusion = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.buttonAddInclusions = new System.Windows.Forms.Button();
+            this.numericMooreProbability = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
+            this.comboBoxStructureType = new System.Windows.Forms.ComboBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.buttonSelectGrains = new System.Windows.Forms.Button();
+            this.buttonGenerate = new System.Windows.Forms.Button();
+            this.numericUpDownSubGrainsNum = new System.Windows.Forms.NumericUpDown();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHeight)).BeginInit();
@@ -67,6 +77,8 @@
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSizeOfInclusions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericAmountOfInclusions)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericMooreProbability)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSubGrainsNum)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -76,11 +88,12 @@
             this.pictureBox1.Size = new System.Drawing.Size(314, 336);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(332, 37);
+            this.label1.Location = new System.Drawing.Point(332, 32);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 1;
@@ -89,7 +102,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(332, 63);
+            this.label2.Location = new System.Drawing.Point(332, 58);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(38, 13);
             this.label2.TabIndex = 3;
@@ -98,7 +111,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(333, 116);
+            this.label3.Location = new System.Drawing.Point(333, 111);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(80, 13);
             this.label3.TabIndex = 5;
@@ -110,7 +123,8 @@
             this.comboBoxNeighbourhood.FormattingEnabled = true;
             this.comboBoxNeighbourhood.Items.AddRange(new object[] {
             "Von Neumann",
-            "Moore"});
+            "Moore",
+            "Moore 2"});
             this.comboBoxNeighbourhood.Location = new System.Drawing.Point(438, 108);
             this.comboBoxNeighbourhood.Name = "comboBoxNeighbourhood";
             this.comboBoxNeighbourhood.Size = new System.Drawing.Size(126, 21);
@@ -132,7 +146,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(333, 143);
+            this.label4.Location = new System.Drawing.Point(333, 138);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(99, 13);
             this.label4.TabIndex = 7;
@@ -140,9 +154,9 @@
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(334, 210);
+            this.buttonStart.Location = new System.Drawing.Point(12, 384);
             this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(76, 25);
+            this.buttonStart.Size = new System.Drawing.Size(104, 25);
             this.buttonStart.TabIndex = 9;
             this.buttonStart.Text = "Start";
             this.buttonStart.UseVisualStyleBackColor = true;
@@ -150,7 +164,7 @@
             // 
             // buttonStop
             // 
-            this.buttonStop.Location = new System.Drawing.Point(416, 210);
+            this.buttonStop.Location = new System.Drawing.Point(122, 384);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(76, 25);
             this.buttonStop.TabIndex = 10;
@@ -160,9 +174,9 @@
             // 
             // buttonRestart
             // 
-            this.buttonRestart.Location = new System.Drawing.Point(498, 210);
+            this.buttonRestart.Location = new System.Drawing.Point(204, 384);
             this.buttonRestart.Name = "buttonRestart";
-            this.buttonRestart.Size = new System.Drawing.Size(76, 25);
+            this.buttonRestart.Size = new System.Drawing.Size(122, 25);
             this.buttonRestart.TabIndex = 11;
             this.buttonRestart.Text = "Restart";
             this.buttonRestart.UseVisualStyleBackColor = true;
@@ -242,11 +256,11 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(333, 89);
+            this.label5.Location = new System.Drawing.Point(334, 84);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(87, 13);
+            this.label5.Size = new System.Drawing.Size(86, 13);
             this.label5.TabIndex = 14;
-            this.label5.Text = "Number of grains";
+            this.label5.Text = "Amount of grains";
             // 
             // menuStrip1
             // 
@@ -254,7 +268,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(589, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(814, 24);
             this.menuStrip1.TabIndex = 16;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -308,7 +322,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(331, 184);
+            this.label6.Location = new System.Drawing.Point(107, 368);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(101, 13);
             this.label6.TabIndex = 17;
@@ -317,7 +331,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(330, 247);
+            this.label7.Location = new System.Drawing.Point(409, 240);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(54, 13);
             this.label7.TabIndex = 18;
@@ -325,7 +339,7 @@
             // 
             // numericSizeOfInclusions
             // 
-            this.numericSizeOfInclusions.Location = new System.Drawing.Point(437, 285);
+            this.numericSizeOfInclusions.Location = new System.Drawing.Point(439, 282);
             this.numericSizeOfInclusions.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -347,7 +361,7 @@
             // 
             // numericAmountOfInclusions
             // 
-            this.numericAmountOfInclusions.Location = new System.Drawing.Point(437, 259);
+            this.numericAmountOfInclusions.Location = new System.Drawing.Point(439, 256);
             this.numericAmountOfInclusions.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -370,7 +384,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(332, 292);
+            this.label8.Location = new System.Drawing.Point(334, 289);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(88, 13);
             this.label8.TabIndex = 20;
@@ -379,7 +393,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(332, 266);
+            this.label9.Location = new System.Drawing.Point(334, 263);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(104, 13);
             this.label9.TabIndex = 19;
@@ -391,7 +405,7 @@
             this.comboBoxTypeOfInclusion.Items.AddRange(new object[] {
             "Circle",
             "Square"});
-            this.comboBoxTypeOfInclusion.Location = new System.Drawing.Point(437, 311);
+            this.comboBoxTypeOfInclusion.Location = new System.Drawing.Point(439, 308);
             this.comboBoxTypeOfInclusion.Name = "comboBoxTypeOfInclusion";
             this.comboBoxTypeOfInclusion.Size = new System.Drawing.Size(126, 21);
             this.comboBoxTypeOfInclusion.TabIndex = 24;
@@ -399,7 +413,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(332, 319);
+            this.label10.Location = new System.Drawing.Point(334, 316);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(87, 13);
             this.label10.TabIndex = 23;
@@ -407,7 +421,7 @@
             // 
             // buttonAddInclusions
             // 
-            this.buttonAddInclusions.Location = new System.Drawing.Point(335, 341);
+            this.buttonAddInclusions.Location = new System.Drawing.Point(337, 338);
             this.buttonAddInclusions.Name = "buttonAddInclusions";
             this.buttonAddInclusions.Size = new System.Drawing.Size(228, 25);
             this.buttonAddInclusions.TabIndex = 25;
@@ -415,11 +429,136 @@
             this.buttonAddInclusions.UseVisualStyleBackColor = true;
             this.buttonAddInclusions.Click += new System.EventHandler(this.button1_Click);
             // 
+            // numericMooreProbability
+            // 
+            this.numericMooreProbability.Location = new System.Drawing.Point(438, 162);
+            this.numericMooreProbability.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericMooreProbability.Name = "numericMooreProbability";
+            this.numericMooreProbability.Size = new System.Drawing.Size(126, 20);
+            this.numericMooreProbability.TabIndex = 27;
+            this.numericMooreProbability.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(333, 164);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(55, 13);
+            this.label11.TabIndex = 26;
+            this.label11.Text = "Probability";
+            // 
+            // comboBoxStructureType
+            // 
+            this.comboBoxStructureType.FormattingEnabled = true;
+            this.comboBoxStructureType.Items.AddRange(new object[] {
+            "Substructure",
+            "Dual phase"});
+            this.comboBoxStructureType.Location = new System.Drawing.Point(678, 27);
+            this.comboBoxStructureType.Name = "comboBoxStructureType";
+            this.comboBoxStructureType.Size = new System.Drawing.Size(126, 21);
+            this.comboBoxStructureType.TabIndex = 28;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(569, 32);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(94, 13);
+            this.label12.TabIndex = 29;
+            this.label12.Text = "Substructure Type";
+            // 
+            // buttonSelectGrains
+            // 
+            this.buttonSelectGrains.Location = new System.Drawing.Point(572, 80);
+            this.buttonSelectGrains.Name = "buttonSelectGrains";
+            this.buttonSelectGrains.Size = new System.Drawing.Size(232, 25);
+            this.buttonSelectGrains.TabIndex = 30;
+            this.buttonSelectGrains.Text = "Select grains";
+            this.buttonSelectGrains.UseVisualStyleBackColor = true;
+            this.buttonSelectGrains.Click += new System.EventHandler(this.buttonSelectGrains_Click);
+            // 
+            // buttonGenerate
+            // 
+            this.buttonGenerate.Location = new System.Drawing.Point(572, 111);
+            this.buttonGenerate.Name = "buttonGenerate";
+            this.buttonGenerate.Size = new System.Drawing.Size(232, 25);
+            this.buttonGenerate.TabIndex = 31;
+            this.buttonGenerate.Text = "Generate";
+            this.buttonGenerate.UseVisualStyleBackColor = true;
+            this.buttonGenerate.Click += new System.EventHandler(this.buttonGenerate_Click);
+            // 
+            // numericUpDownSubGrainsNum
+            // 
+            this.numericUpDownSubGrainsNum.Location = new System.Drawing.Point(678, 54);
+            this.numericUpDownSubGrainsNum.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.numericUpDownSubGrainsNum.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownSubGrainsNum.Name = "numericUpDownSubGrainsNum";
+            this.numericUpDownSubGrainsNum.Size = new System.Drawing.Size(126, 20);
+            this.numericUpDownSubGrainsNum.TabIndex = 32;
+            this.numericUpDownSubGrainsNum.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(569, 58);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(103, 13);
+            this.label13.TabIndex = 33;
+            this.label13.Text = "Amount of subgrains";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(627, 11);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(67, 13);
+            this.label14.TabIndex = 34;
+            this.label14.Text = "Substructure";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(409, 11);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(44, 13);
+            this.label15.TabIndex = 35;
+            this.label15.Text = "General";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(589, 378);
+            this.ClientSize = new System.Drawing.Size(814, 421);
+            this.Controls.Add(this.label15);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.numericUpDownSubGrainsNum);
+            this.Controls.Add(this.buttonGenerate);
+            this.Controls.Add(this.buttonSelectGrains);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.comboBoxStructureType);
+            this.Controls.Add(this.numericMooreProbability);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.buttonAddInclusions);
             this.Controls.Add(this.comboBoxTypeOfInclusion);
             this.Controls.Add(this.label10);
@@ -445,8 +584,8 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
             this.MainMenuStrip = this.menuStrip1;
-            this.MaximumSize = new System.Drawing.Size(605, 417);
-            this.MinimumSize = new System.Drawing.Size(605, 417);
+            this.MaximumSize = new System.Drawing.Size(830, 460);
+            this.MinimumSize = new System.Drawing.Size(830, 460);
             this.Name = "Form1";
             this.Text = "Multiscale Modelling";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -458,6 +597,8 @@
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericSizeOfInclusions)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericAmountOfInclusions)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericMooreProbability)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSubGrainsNum)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -496,6 +637,16 @@
         private System.Windows.Forms.ComboBox comboBoxTypeOfInclusion;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button buttonAddInclusions;
+        private System.Windows.Forms.NumericUpDown numericMooreProbability;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ComboBox comboBoxStructureType;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button buttonSelectGrains;
+        private System.Windows.Forms.Button buttonGenerate;
+        private System.Windows.Forms.NumericUpDown numericUpDownSubGrainsNum;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label15;
     }
 }
 

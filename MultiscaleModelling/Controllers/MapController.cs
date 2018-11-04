@@ -29,8 +29,8 @@ namespace MultiscaleModelling.Controllers
         public MapController(int width, int height)
         {
             //add border nodes
-            width++;
-            height++;
+            width+=2;
+            height+=2;
 
             _width = width;
             _height = height;
@@ -75,6 +75,8 @@ namespace MultiscaleModelling.Controllers
                     return GetMooreNeighbourhoods(x,y);
                 case NeighbourhoodEnum.VonNeumann:
                     return GetVonNeumannNeighbourhoods(x,y);
+                case NeighbourhoodEnum.Cross:
+                    return GetCrossNeighbourhoods(x, y);
             }
             return new List<Node>();
         }
@@ -102,12 +104,12 @@ namespace MultiscaleModelling.Controllers
                     var node = _previousMap.GetNode(x, y);
                     if (node == null || node.Type == TypeEnum.Empty)
                         bitmap.SetPixel(x, y, _emptyColor);
-                    else if(node.Type == TypeEnum.Grain)
-                        bitmap.SetPixel(x, y, _previousMap.GetNode(x, y).Color);
                     else if(node.Type == TypeEnum.Border)
                         bitmap.SetPixel(x, y, _borderColor);
                     else if (node.Type == TypeEnum.Inclusion)
                         bitmap.SetPixel(x, y, _inclusionColor);
+                    else
+                        bitmap.SetPixel(x, y, _previousMap.GetNode(x, y).Color);
                 }
             }
             return bitmap;
@@ -145,6 +147,18 @@ namespace MultiscaleModelling.Controllers
             }
         }
 
+        public Node GetEmptyNode(int x, int y)
+        {
+            return new Node()
+            {
+                Color = _emptyColor,
+                Id = 0,
+                Type = TypeEnum.Empty,
+                X=x,
+                Y=y
+            };
+        }
+
 
         private Dictionary<TypeEnum,Color> GetColorMapper()
         {
@@ -180,6 +194,7 @@ namespace MultiscaleModelling.Controllers
             }
         }
 
+
         private List<Node> GetMooreNeighbourhoods(int x, int y)
         {
             List<Node> neighbourhoods = new List<Node>();
@@ -203,6 +218,17 @@ namespace MultiscaleModelling.Controllers
             neighbourhoods.Add(_previousMap.GetNode(x-1, y));
             neighbourhoods.Add(_previousMap.GetNode(x+1, y));
             neighbourhoods.Add(_previousMap.GetNode(x, y-1));
+
+            return neighbourhoods;
+        }
+        private List<Node> GetCrossNeighbourhoods(int x, int y)
+        {
+            List<Node> neighbourhoods = new List<Node>();
+
+            neighbourhoods.Add(_previousMap.GetNode(x-1, y + 1));
+            neighbourhoods.Add(_previousMap.GetNode(x + 1, y+1));
+            neighbourhoods.Add(_previousMap.GetNode(x - 1, y-1));
+            neighbourhoods.Add(_previousMap.GetNode(x + 1, y- 1));
 
             return neighbourhoods;
         }

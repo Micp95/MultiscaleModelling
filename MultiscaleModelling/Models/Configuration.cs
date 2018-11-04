@@ -11,7 +11,10 @@ namespace MultiscaleModelling.Models
         public int Width { get; set; }
         public int Height { get; set; }
         public int NumberOfGrains { get; set; }
+        public int NumberOfSubGrains { get; set; }
         public BCEnum BoundaryConditions { get; set; } 
         public NeighbourhoodEnum Neighbourhood { get; set; }
+        public int MooreProbability { get; set; }
+        public StructureTypeEnume StructureTypeEnume { get; set; }
     }
 }

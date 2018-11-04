@@ -25,12 +25,14 @@ namespace MultiscaleModelling
             comboBoxBC.SelectedIndex = 0;
             comboBoxNeighbourhood.SelectedIndex = 0;
             comboBoxTypeOfInclusion.SelectedIndex = 0;
+            comboBoxStructureType.SelectedIndex = 0;
             _isStartedSimulation = false;
 
             _currentSimullation = new StandardSimulation();
             ChangeEnableGrowOptions(true);
             ChangeEnableGrowButtons(true);
             ChangeEnableInclusionsOptions(true);
+            ChangeEnableSubstructure(false);
 
             exportToolStripMenuItem.Enabled = false;
         }
@@ -44,7 +46,10 @@ namespace MultiscaleModelling
                 Height= (int)numericUpDownHeight.Value,
                 BoundaryConditions=(BCEnum)comboBoxBC.SelectedIndex,
                 Neighbourhood=(NeighbourhoodEnum)comboBoxNeighbourhood.SelectedIndex,
-                NumberOfGrains= (int)numericUpDownNumberOfGrain.Value
+                NumberOfGrains= (int)numericUpDownNumberOfGrain.Value,
+                MooreProbability = (int)numericMooreProbability.Value,
+                StructureTypeEnume = (StructureTypeEnume)comboBoxStructureType.SelectedIndex,
+                NumberOfSubGrains = (int)numericUpDownSubGrainsNum.Value
             };
         }
 
@@ -63,11 +68,12 @@ namespace MultiscaleModelling
         {
             ChangeEnableGrowOptions(false);
             ChangeEnableInclusionsOptions(false);
+            ChangeEnableSubstructure(false);
 
             var config = GetConfiguration();
 
             _currentSimullation.Initialize(config);
-            _currentSimullation.SeedGrains(config);
+            _currentSimullation.SeedGrains(config.NumberOfGrains);
             _isStartedSimulation = true;
         }
         private void Render(Bitmap map)
@@ -99,6 +105,7 @@ namespace MultiscaleModelling
             numericUpDownNumberOfGrain.Enabled = enable;
             comboBoxNeighbourhood.Enabled = enable;
             comboBoxBC.Enabled = enable;
+            numericMooreProbability.Enabled = enable;
         }
         private void ChangeEnableInclusionsOptions(bool enable)
         {
@@ -111,6 +118,15 @@ namespace MultiscaleModelling
         {
             buttonStart.Enabled = enable;
             buttonStop.Enabled = enable;
+        }
+        private void ChangeEnableSubstructure(bool enable)
+        {
+            comboBoxStructureType.Enabled = enable;
+            numericUpDownSubGrainsNum.Enabled = enable;
+            buttonSelectGrains.Enabled = enable;
+            buttonGenerate.Enabled = enable;
+
+            _grainsSelection = false;
         }
 
         private void label3_Click(object sender, EventArgs e)
@@ -125,6 +141,7 @@ namespace MultiscaleModelling
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
+            ChangeEnableSubstructure(false);
             if (!_isStartedSimulation)
             {
                 StartStandatdSimulation();
@@ -148,6 +165,7 @@ namespace MultiscaleModelling
             ChangeEnableInclusionsOptions(true);
             ChangeEnableGrowOptions(true);
             ChangeEnableGrowButtons(true);
+            ChangeEnableSubstructure(false);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -163,6 +181,7 @@ namespace MultiscaleModelling
             {
                 ChangeEnableGrowButtons(false);
                 ChangeEnableInclusionsOptions(true);
+                ChangeEnableSubstructure(true);
                 exportToolStripMenuItem.Enabled = true;
                 timer1.Enabled = false;
             }
@@ -202,7 +221,13 @@ namespace MultiscaleModelling
                 ChangeEnableGrowOptions(false);
                 ChangeEnableGrowButtons(false);
                 ChangeEnableInclusionsOptions(true);
+                ChangeEnableSubstructure(true);
                 exportToolStripMenuItem.Enabled = true;
+
+                var config = _currentSimullation.GetConfiguration();
+                numericUpDownWidth.Value = config.Width;
+                numericUpDownHeight.Value = config.Height;
+                numericUpDownNumberOfGrain.Value = config.NumberOfGrains;
             }
         }
 
@@ -245,6 +270,52 @@ namespace MultiscaleModelling
             }
             var config = GetConfigurationInclusions();
             _currentSimullation.AddInclusions(config);
+            RenderStep();
+        }
+
+        private bool _grainsSelection = false;
+        private void buttonSelectGrains_Click(object sender, EventArgs e)
+        {
+            _currentSimullation.RestartSelectedList();
+            _grainsSelection = true;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            if(_grainsSelection == true)
+            {
+                var mouseEvent = (MouseEventArgs)e;
+                double imageX = mouseEvent.X;
+                double imageY = mouseEvent.Y;
+
+                double imageWidth = pictureBox1.Width;
+                double imageHeight = pictureBox1.Height;
+
+                var map = _currentSimullation.GetBitmap();
+
+                double mapWidth = map.Width;
+                double mapHeight = map.Height;
+
+
+                int x = (int)(imageX / imageWidth * mapWidth);
+                int y = (int)(imageY / imageHeight * mapHeight);
+
+                _currentSimullation.AddGrainsToSelectLis(x,y);
+
+
+            }
+        }
+
+        private void buttonGenerate_Click(object sender, EventArgs e)
+        {
+            var config = GetConfiguration();
+            _isStartedSimulation = true;
+            _grainsSelection = false;
+            _currentSimullation.StartGenerateSubstructure(config);
+
+            _currentSimullation.SeedGrains(config.NumberOfSubGrains);
+
+            ChangeEnableGrowButtons(true);
             RenderStep();
         }
     }

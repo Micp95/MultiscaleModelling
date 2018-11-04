@@ -64,6 +64,7 @@
     <Compile Include="Models\Map.cs" />
     <Compile Include="Models\NeighbourhoodEnum.cs" />
     <Compile Include="Models\Node.cs" />
+    <Compile Include="Models\StructureTypeEnume.cs" />
     <Compile Include="Models\TypeEnum.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

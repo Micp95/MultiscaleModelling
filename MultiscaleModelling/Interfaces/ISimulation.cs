@@ -18,9 +18,15 @@ namespace MultiscaleModelling.Interfaces
         void ExportToFile(FileTypeEnum type, string fileName);
         void ImportFromFile(FileTypeEnum type, string fileName);
         void AddInclusions(ConfigurationInclusions config);
-        void SeedGrains(Configuration config);
+        void SeedGrains(int numberOfGrains);
+        Configuration GetConfiguration();
         bool IsMapEmpty();
 
         bool IsEndSimulation();
+
+        void AddGrainsToSelectLis(int x, int y);
+        void RestartSelectedList();
+        void StartGenerateSubstructure(Configuration config);
+
     }
 }

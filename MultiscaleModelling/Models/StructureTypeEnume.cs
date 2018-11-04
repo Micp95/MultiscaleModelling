@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace MultiscaleModelling.Models
 {
-    public enum TypeEnum
+    public enum StructureTypeEnume
     {
-        Empty=0,
-        Border = 1,
-        Grain = 2,
-        Inclusion = 3,
-        OldGrain = 4
+        Substructure = 0,
+        DualPhase = 1
     }
 }

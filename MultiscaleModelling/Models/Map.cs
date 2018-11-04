@@ -20,7 +20,9 @@ namespace MultiscaleModelling.Models
 
         public Node GetNode(int x, int y)
         {
-            return _nodes[x, y];
+            if (x >= 0 && y >= 0 && x < _width && y < _height)
+                return _nodes[x, y];
+            return null;
         }
         public void SetNode (Node node, int x, int y)
         {

@@ -9,6 +9,9 @@ namespace MultiscaleModelling.Models
     public enum NeighbourhoodEnum
     {
         VonNeumann = 0,
-        Moore = 1
+        Moore = 1,
+        Moore2 = 2,
+        Cross = 3
+
     }
 }

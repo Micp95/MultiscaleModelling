@@ -19,6 +19,7 @@ namespace MultiscaleModelling.Simulation
         private bool _endSimulation;
         private bool _isMapEmpty;
         private int _currentGrainId;
+        List<Grain> _selectedGrains;
 
         public Bitmap GetBitmap()
         {
@@ -28,8 +29,10 @@ namespace MultiscaleModelling.Simulation
         public StandardSimulation()
         {
             _grains = new List<Grain>();
+            _selectedGrains = new List<Grain>();
             _random = new Random();
             _isMapEmpty = true;
+            _currentGrainId = 100;
         }
         public void Initialize(Configuration config)
         {
@@ -43,6 +46,7 @@ namespace MultiscaleModelling.Simulation
             }
             _configuration = config;
             _isMapEmpty = false;
+            _selectedGrains.Clear();
         }
 
         public void Restart()
@@ -51,25 +55,28 @@ namespace MultiscaleModelling.Simulation
             _mapController.Commit();
             _endSimulation = false;
             _isMapEmpty = true;
+            _selectedGrains.Clear();
         }
 
         public bool IsMapEmpty()
         {
             return _isMapEmpty;
         }
-        public void SeedGrains(Configuration config)
+        public void SeedGrains(int numberOfGrains)
         {
-            _configuration = config;
-            _currentGrainId = 100;
-            int grainsToGenerate = config.NumberOfGrains;
+            int grainsToGenerate = numberOfGrains;
             while(grainsToGenerate > 0)
             {
                 var grain = GetRandomGrain();
+                _grains.Add(grain);
                 AddGrainToRandomPosition(grain);
 
+                _mapController.Commit();
+                _mapController.CopyMap();
                 grainsToGenerate--;
             }
-            _mapController.Commit();
+
+            GenerateListOfGrains();
         }
 
 
@@ -97,6 +104,9 @@ namespace MultiscaleModelling.Simulation
                 }
             }
             _mapController.Commit();
+
+            if (_endSimulation)
+                EndSubstructureSimulation();
         }
 
 
@@ -199,9 +209,9 @@ namespace MultiscaleModelling.Simulation
         {
             List<Node> edgesNodes = new List<Node>();
 
-            for (int x = 1; x < _configuration.Width -1; x++)
+            for (int x = 1; x < _configuration.Width; x++)
             {
-                for (int y = 1; y < _configuration.Height -1 ; y++)
+                for (int y = 1; y < _configuration.Height ; y++)
                 {
                     var myNode = _mapController.GetNode(x, y);
                     var neighbourhood = _mapController.GetNeighbourhoods(x, y, NeighbourhoodEnum.Moore);
@@ -222,19 +232,7 @@ namespace MultiscaleModelling.Simulation
             {
                 _endSimulation = false;
 
-                var neighbourhood = _mapController.GetNeighbourhoods(x, y, _configuration.Neighbourhood);
-
-                neighbourhood = neighbourhood.Where(k => k.Type == TypeEnum.Grain).ToList();
-                if (neighbourhood.Any())
-                {
-                    var orderedNeighbourhood = neighbourhood.GroupBy(s => s).Select(g => new KeyValuePair<Node,int>(g.First(),g.Count())).OrderByDescending(p=>p.Value).ToList();
-                    var winnerValue = orderedNeighbourhood.FirstOrDefault().Value;
-
-                    var winners = orderedNeighbourhood.Where(p=>p.Value== winnerValue).ToList();
-                    var randomWinner = winners[_random.Next(winners.Count)].Key;
-
-                    node = randomWinner;
-                }
+                node = GetNodeForCA(node, _configuration.Neighbourhood);
             }
 
 
@@ -246,6 +244,84 @@ namespace MultiscaleModelling.Simulation
                 Color = node.Color,
                 Type = node.Type
             });
+        }
+
+        private Node GetNodeForCA(Node node, NeighbourhoodEnum type)
+        {
+            switch (type)
+            {
+                case NeighbourhoodEnum.Moore:
+                case NeighbourhoodEnum.VonNeumann:
+                    return GetNodeforStandardMethod(node);
+                case NeighbourhoodEnum.Moore2:
+                    return GetNodeforModificationMethod(node);
+            }
+            return null;
+        }
+        
+        private Node GetNodeforStandardMethod(Node node)
+        {
+            var neighbourhood = _mapController.GetNeighbourhoods(node.X, node.Y, _configuration.Neighbourhood);
+
+            neighbourhood = neighbourhood.Where(k => k.Type == TypeEnum.Grain).ToList();
+            if (neighbourhood.Any())
+            {
+                var orderedNeighbourhood = neighbourhood.GroupBy(s => s).Select(g => new KeyValuePair<Node, int>(g.First(), g.Count())).OrderByDescending(p => p.Value).ToList();
+                var winnerValue = orderedNeighbourhood.FirstOrDefault().Value;
+
+                var winners = orderedNeighbourhood.Where(p => p.Value == winnerValue).ToList();
+                var randomWinner = winners[_random.Next(winners.Count)].Key;
+
+                node = randomWinner;
+            }
+
+            return node;
+        }
+        private Node GetNodeforModificationMethod(Node node)
+        {
+            var mooreNeighbourhood = GetListOfGrainNeighbourhood(node, NeighbourhoodEnum.Moore);
+            if (mooreNeighbourhood == null || !mooreNeighbourhood.Any())
+                return node;
+            if(mooreNeighbourhood.FirstOrDefault().Value >= 5)
+            {
+                return mooreNeighbourhood.FirstOrDefault().Key;
+            }
+
+            var secondNeighbourhood = GetListOfGrainNeighbourhood(node, NeighbourhoodEnum.VonNeumann);
+            if (secondNeighbourhood != null && secondNeighbourhood.FirstOrDefault().Value >= 3)
+            {
+                return secondNeighbourhood.FirstOrDefault().Key;
+            }
+
+            var trNeighbourhood = GetListOfGrainNeighbourhood(node, NeighbourhoodEnum.Cross);
+            if (trNeighbourhood != null && trNeighbourhood.FirstOrDefault().Value >= 3)
+            {
+                return trNeighbourhood.FirstOrDefault().Key;
+            }
+
+            int randomNumber = _random.Next(100);
+            if(randomNumber < _configuration.MooreProbability)
+            {
+                var winnerValue = mooreNeighbourhood.FirstOrDefault().Value;
+                var winners = mooreNeighbourhood.Where(p => p.Value == winnerValue).ToList();
+                return winners[_random.Next(winners.Count)].Key;
+            }
+
+            return node;
+        }
+
+        private List<KeyValuePair<Node,int>> GetListOfGrainNeighbourhood(Node node, NeighbourhoodEnum type)
+        {
+            var neighbourhood = _mapController.GetNeighbourhoods(node.X, node.Y, type);
+
+            neighbourhood = neighbourhood.Where(k => k.Type == TypeEnum.Grain).ToList();
+
+            if (neighbourhood.Any())
+            {
+                var orderedNeighbourhood = neighbourhood.GroupBy(s => s).Select(g => new KeyValuePair<Node, int>(g.First(), g.Count())).OrderByDescending(p => p.Value).ToList();
+                return orderedNeighbourhood;
+            }
+            return null;
         }
 
         private void AddGrainToRandomPosition(Grain grain)
@@ -274,7 +350,14 @@ namespace MultiscaleModelling.Simulation
         private Grain GetRandomGrain()
         {
             int id = _currentGrainId++;
-            Color color = Color.FromArgb(_random.Next(2,254), _random.Next(2, 254), _random.Next(2, 254));
+            Color color;
+            bool isNewColor = false;
+            do
+            {
+                color = Color.FromArgb(_random.Next(2,254), _random.Next(2, 254), _random.Next(2, 254));
+                isNewColor = !_grains.Any(k => k.Color.GetHashCode() == color.GetHashCode());
+            } while (!isNewColor);
+
 
             return new Grain()
             {
@@ -305,13 +388,118 @@ namespace MultiscaleModelling.Simulation
 
             _endSimulation = true;
             _isMapEmpty = false;
-            _configuration.Width = _mapController.Width-1;
-            _configuration.Height = _mapController.Height-1;
+            _configuration.Width = _mapController.Width-2;
+            _configuration.Height = _mapController.Height-2;
+
+            GenerateListOfGrains();
+            _configuration.NumberOfGrains = _grains.Count;
         }
 
         public bool IsEndSimulation()
         {
             return _endSimulation;
+        }
+
+        public void AddGrainsToSelectLis(int x, int y)
+        {
+            var node = _mapController.GetNode(x, y);
+            if(node.Id > 100 && !_selectedGrains.Any(k=>k.Id == node.Id))
+            {
+                _selectedGrains.Add(new Grain()
+                {
+                    Color = node.Color,
+                    Id = node.Id
+                });
+            }
+        }
+
+        public void StartGenerateSubstructure(Configuration config)
+        {
+            Grain newGrain = null;
+            if(config.StructureTypeEnume == StructureTypeEnume.DualPhase)
+            {
+                newGrain = GetRandomGrain();
+            }
+
+            for (int x = 1; x <= _configuration.Width; x++)
+            {
+                for (int y = 1; y <= _configuration.Height; y++)
+                {
+                    var node =_mapController.GetNode(x, y);
+                    if(_selectedGrains.Any(k=>k.Id == node.Id)){
+                        if(newGrain == null)
+                        {
+                            node.Type = TypeEnum.OldGrain;
+                            _mapController.SetNode(x, y, node);
+                        }else
+                        {
+                            _mapController.SetNode(x, y, new Node()
+                            {
+                                Color= newGrain.Color,
+                                Id=newGrain.Id,
+                                Type=TypeEnum.OldGrain,
+                                X=x,
+                                Y=y
+                            });
+                        }
+                    }else{
+                        _mapController.SetNode(x, y, _mapController.GetEmptyNode(x, y));
+                    }
+                }
+            }
+            _mapController.Commit();
+            _endSimulation = false;
+            _mapController.CopyMap();
+
+            if (config.StructureTypeEnume == StructureTypeEnume.DualPhase)
+            {
+                _selectedGrains = new List<Grain>();
+                _selectedGrains.Add(newGrain);
+            }
+        }
+
+        private void EndSubstructureSimulation()
+        {
+            for (int x = 1; x <= _configuration.Width; x++)
+            {
+                for (int y = 1; y <= _configuration.Height; y++)
+                {
+                    var node = _mapController.GetNode(x, y);
+                    if (node.Type == TypeEnum.OldGrain)
+                        node.Type = TypeEnum.Grain;
+                }
+            }
+        }
+
+        public Configuration GetConfiguration()
+        {
+            return _configuration;
+        }
+
+        private void GenerateListOfGrains()
+        {
+            _grains = new List<Grain>();
+
+            for (int x = 1; x < _configuration.Width; x++)
+            {
+                for (int y = 1; y < _configuration.Height; y++)
+                {
+                    var node = _mapController.GetNode(x, y);
+                    if((node.Type == TypeEnum.Grain || node.Type == TypeEnum.OldGrain)  && !_grains.Any(k=>k.Id == node.Id))
+                    {
+                        _grains.Add(new Grain()
+                        {
+                            Id = node.Id,
+                            Color = node.Color
+                        });
+                    }
+                }
+            }
+        }
+
+        public void RestartSelectedList()
+        {
+            _selectedGrains = new List<Grain>();
         }
     }
 }
