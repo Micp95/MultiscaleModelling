@@ -14,6 +14,7 @@ namespace MultiscaleModelling.Controllers
         private static Color _borderColor = Color.Black;
         private static Color _emptyColor = Color.White;
         private static Color _inclusionColor = Color.Black;
+        private static Color _borderGraintColor = Color.Black;
 
         private int _width;
         private int _height;
@@ -102,19 +103,28 @@ namespace MultiscaleModelling.Controllers
                 for (int y = 0; y < _height; y++)
                 {
                     var node = _previousMap.GetNode(x, y);
-                    if (node == null || node.Type == TypeEnum.Empty)
-                        bitmap.SetPixel(x, y, _emptyColor);
-                    else if(node.Type == TypeEnum.Border)
-                        bitmap.SetPixel(x, y, _borderColor);
-                    else if (node.Type == TypeEnum.Inclusion)
-                        bitmap.SetPixel(x, y, _inclusionColor);
-                    else
-                        bitmap.SetPixel(x, y, _previousMap.GetNode(x, y).Color);
+                    bitmap.SetPixel(x, y, node.Color);
                 }
             }
             return bitmap;
         }
-
+        public Bitmap GetBitmapWithHiddenColors(List<int> ids)
+        {
+            Bitmap bitmap = new Bitmap(_width, _height);
+            for (int x = 0; x < _width; x++)
+            {
+                for (int y = 0; y < _height; y++)
+                {
+                    var node = _previousMap.GetNode(x, y);
+               
+                    if(!ids.Contains(node.Id))
+                        bitmap.SetPixel(x, y, _previousMap.GetNode(x, y).Color);
+                    else
+                        bitmap.SetPixel(x, y, _emptyColor);
+                }
+            }
+            return bitmap;
+        }
 
         public void ImportFromFile(string name,FileTypeEnum type)
         {
@@ -158,7 +168,22 @@ namespace MultiscaleModelling.Controllers
                 Y=y
             };
         }
+        public Node GetInclusionNode(int x, int y)
+        {
+            return new Node()
+            {
+                Color = _inclusionColor,
+                Id = 3,
+                Type = TypeEnum.Inclusion,
+                X = x,
+                Y = y
+            };
+        }
 
+        public Color GetGrainBorderColor()
+        {
+            return _borderGraintColor;
+        }
 
         private Dictionary<TypeEnum,Color> GetColorMapper()
         {
@@ -182,13 +207,18 @@ namespace MultiscaleModelling.Controllers
                 for (int y = 0; y < _height; y++)
                 {
                     TypeEnum type = TypeEnum.Empty;
+                    Color color = _emptyColor;
                     if (x == 0 || y == 0 || x == _width - 1 || y == _height - 1)
+                    {
                         type = TypeEnum.Border;
+                        color = _borderColor;
+                    }
                     _currentMap.SetNode(new Node()
                     {
                         X = x,
                         Y = y,
-                        Type = type
+                        Type = type,
+                        Color= color
                     }, x, y);
                 }
             }

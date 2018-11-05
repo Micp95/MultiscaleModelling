@@ -49,7 +49,8 @@ namespace MultiscaleModelling
                 NumberOfGrains= (int)numericUpDownNumberOfGrain.Value,
                 MooreProbability = (int)numericMooreProbability.Value,
                 StructureTypeEnume = (StructureTypeEnume)comboBoxStructureType.SelectedIndex,
-                NumberOfSubGrains = (int)numericUpDownSubGrainsNum.Value
+                NumberOfSubGrains = (int)numericUpDownSubGrainsNum.Value,
+                SizeOfGB = (int)numericUpDownGBSize.Value,
             };
         }
 
@@ -127,6 +128,7 @@ namespace MultiscaleModelling
             buttonGenerate.Enabled = enable;
 
             _grainsSelection = false;
+            timer2.Enabled = false;
         }
 
         private void label3_Click(object sender, EventArgs e)
@@ -278,6 +280,7 @@ namespace MultiscaleModelling
         {
             _currentSimullation.RestartSelectedList();
             _grainsSelection = true;
+            timer2.Enabled = true;
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -300,7 +303,7 @@ namespace MultiscaleModelling
                 int x = (int)(imageX / imageWidth * mapWidth);
                 int y = (int)(imageY / imageHeight * mapHeight);
 
-                _currentSimullation.AddGrainsToSelectLis(x,y);
+                _currentSimullation.AddOrRemoveGrainsToSelectLis(x,y);
 
 
             }
@@ -311,11 +314,37 @@ namespace MultiscaleModelling
             var config = GetConfiguration();
             _isStartedSimulation = true;
             _grainsSelection = false;
+            timer2.Enabled = false;
             _currentSimullation.StartGenerateSubstructure(config);
 
             _currentSimullation.SeedGrains(config.NumberOfSubGrains);
 
             ChangeEnableGrowButtons(true);
+            RenderStep();
+        }
+
+        private bool _visFlag = false;
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+
+            if (_grainsSelection)
+            {
+                var map = _currentSimullation.GetBitmapGrainsSelection(_visFlag);
+                Render(map);
+                _visFlag = !_visFlag;
+            }
+        }
+
+        private void buttonGenerateGB_Click(object sender, EventArgs e)
+        {
+            var config = GetConfiguration();
+            _currentSimullation.AddBoundariesForGrains(config);
+            RenderStep();
+        }
+
+        private void buttonRemoveColors_Click(object sender, EventArgs e)
+        {
+            _currentSimullation.RemoveGrainsColors();
             RenderStep();
         }
     }

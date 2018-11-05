@@ -70,6 +70,12 @@
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
+            this.buttonGenerateGB = new System.Windows.Forms.Button();
+            this.label16 = new System.Windows.Forms.Label();
+            this.numericUpDownGBSize = new System.Windows.Forms.NumericUpDown();
+            this.label17 = new System.Windows.Forms.Label();
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.buttonRemoveColors = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHeight)).BeginInit();
@@ -79,6 +85,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericAmountOfInclusions)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericMooreProbability)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSubGrainsNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownGBSize)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -461,7 +468,7 @@
             this.comboBoxStructureType.Items.AddRange(new object[] {
             "Substructure",
             "Dual phase"});
-            this.comboBoxStructureType.Location = new System.Drawing.Point(678, 27);
+            this.comboBoxStructureType.Location = new System.Drawing.Point(676, 84);
             this.comboBoxStructureType.Name = "comboBoxStructureType";
             this.comboBoxStructureType.Size = new System.Drawing.Size(126, 21);
             this.comboBoxStructureType.TabIndex = 28;
@@ -469,7 +476,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(569, 32);
+            this.label12.Location = new System.Drawing.Point(567, 89);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(94, 13);
             this.label12.TabIndex = 29;
@@ -477,7 +484,7 @@
             // 
             // buttonSelectGrains
             // 
-            this.buttonSelectGrains.Location = new System.Drawing.Point(572, 80);
+            this.buttonSelectGrains.Location = new System.Drawing.Point(571, 29);
             this.buttonSelectGrains.Name = "buttonSelectGrains";
             this.buttonSelectGrains.Size = new System.Drawing.Size(232, 25);
             this.buttonSelectGrains.TabIndex = 30;
@@ -487,7 +494,7 @@
             // 
             // buttonGenerate
             // 
-            this.buttonGenerate.Location = new System.Drawing.Point(572, 111);
+            this.buttonGenerate.Location = new System.Drawing.Point(571, 138);
             this.buttonGenerate.Name = "buttonGenerate";
             this.buttonGenerate.Size = new System.Drawing.Size(232, 25);
             this.buttonGenerate.TabIndex = 31;
@@ -497,7 +504,7 @@
             // 
             // numericUpDownSubGrainsNum
             // 
-            this.numericUpDownSubGrainsNum.Location = new System.Drawing.Point(678, 54);
+            this.numericUpDownSubGrainsNum.Location = new System.Drawing.Point(676, 111);
             this.numericUpDownSubGrainsNum.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -520,7 +527,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(569, 58);
+            this.label13.Location = new System.Drawing.Point(567, 115);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(103, 13);
             this.label13.TabIndex = 33;
@@ -529,7 +536,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(627, 11);
+            this.label14.Location = new System.Drawing.Point(641, 68);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(67, 13);
             this.label14.TabIndex = 34;
@@ -544,11 +551,81 @@
             this.label15.TabIndex = 35;
             this.label15.Text = "General";
             // 
+            // buttonGenerateGB
+            // 
+            this.buttonGenerateGB.Location = new System.Drawing.Point(570, 228);
+            this.buttonGenerateGB.Name = "buttonGenerateGB";
+            this.buttonGenerateGB.Size = new System.Drawing.Size(232, 25);
+            this.buttonGenerateGB.TabIndex = 36;
+            this.buttonGenerateGB.Text = "Generate";
+            this.buttonGenerateGB.UseVisualStyleBackColor = true;
+            this.buttonGenerateGB.Click += new System.EventHandler(this.buttonGenerateGB_Click);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(567, 206);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(59, 13);
+            this.label16.TabIndex = 38;
+            this.label16.Text = "Border size";
+            // 
+            // numericUpDownGBSize
+            // 
+            this.numericUpDownGBSize.Location = new System.Drawing.Point(676, 202);
+            this.numericUpDownGBSize.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.numericUpDownGBSize.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownGBSize.Name = "numericUpDownGBSize";
+            this.numericUpDownGBSize.Size = new System.Drawing.Size(126, 20);
+            this.numericUpDownGBSize.TabIndex = 37;
+            this.numericUpDownGBSize.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(641, 186);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(81, 13);
+            this.label17.TabIndex = 39;
+            this.label17.Text = "Grain bounaries";
+            // 
+            // timer2
+            // 
+            this.timer2.Interval = 500;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // buttonRemoveColors
+            // 
+            this.buttonRemoveColors.Location = new System.Drawing.Point(570, 259);
+            this.buttonRemoveColors.Name = "buttonRemoveColors";
+            this.buttonRemoveColors.Size = new System.Drawing.Size(232, 25);
+            this.buttonRemoveColors.TabIndex = 40;
+            this.buttonRemoveColors.Text = "Remove Grains Colors";
+            this.buttonRemoveColors.UseVisualStyleBackColor = true;
+            this.buttonRemoveColors.Click += new System.EventHandler(this.buttonRemoveColors_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(814, 421);
+            this.Controls.Add(this.buttonRemoveColors);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.label16);
+            this.Controls.Add(this.numericUpDownGBSize);
+            this.Controls.Add(this.buttonGenerateGB);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
@@ -599,6 +676,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericAmountOfInclusions)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericMooreProbability)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSubGrainsNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownGBSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -647,6 +725,12 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button buttonGenerateGB;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.NumericUpDown numericUpDownGBSize;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.Button buttonRemoveColors;
     }
 }
 

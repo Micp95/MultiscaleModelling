@@ -14,7 +14,7 @@ namespace MultiscaleModelling.Interfaces
         void NextStep();
         void Restart();
         Bitmap GetBitmap();
-
+        Bitmap GetBitmapGrainsSelection(bool visibility);
         void ExportToFile(FileTypeEnum type, string fileName);
         void ImportFromFile(FileTypeEnum type, string fileName);
         void AddInclusions(ConfigurationInclusions config);
@@ -24,9 +24,10 @@ namespace MultiscaleModelling.Interfaces
 
         bool IsEndSimulation();
 
-        void AddGrainsToSelectLis(int x, int y);
+        void AddOrRemoveGrainsToSelectLis(int x, int y);
         void RestartSelectedList();
         void StartGenerateSubstructure(Configuration config);
-
+        void AddBoundariesForGrains(Configuration config);
+        void RemoveGrainsColors();
     }
 }

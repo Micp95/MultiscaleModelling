@@ -12,6 +12,7 @@ namespace MultiscaleModelling.Models
         Border = 1,
         Grain = 2,
         Inclusion = 3,
-        OldGrain = 4
+        OldGrain = 4,
+        GrainBorder = 5
     }
 }
