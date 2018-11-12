@@ -436,7 +436,11 @@ namespace MultiscaleModelling.Simulation
                                 Y=y
                             });
                         }
-                    }else{
+                    }else if (node.Type ==TypeEnum.Inclusion || node.Type == TypeEnum.GrainBorder)
+                    {
+                        _mapController.SetNode(x, y, node);
+                    }
+                    else {
                         _mapController.SetNode(x, y, _mapController.GetEmptyNode(x, y));
                     }
                 }
@@ -553,9 +557,9 @@ namespace MultiscaleModelling.Simulation
         {
             List<Node> grainNodes = new List<Node>();
             List<Node> grainNodesNew;
-            for (int x = 1; x < _configuration.Width; x++)
+            for (int x = 1; x <= _configuration.Width; x++)
             {
-                for (int y = 1; y < _configuration.Height; y++)
+                for (int y = 1; y <= _configuration.Height; y++)
                 {
                     var node = _mapController.GetNode(x, y);
                     if(node.Id == grain.Id)
@@ -570,7 +574,7 @@ namespace MultiscaleModelling.Simulation
                 foreach (var node in grainNodes)
                 {
                     var neighbourhood = _mapController.GetNeighbourhoods(node.X, node.Y, NeighbourhoodEnum.Moore);
-                    int otherGrainCount = neighbourhood.Count(k => (k.Type == TypeEnum.Grain || k.Type == TypeEnum.GrainBorder) && k.Id != node.Id);
+                    int otherGrainCount = neighbourhood.Count(k => (k.Type == TypeEnum.Grain || k.Type == TypeEnum.GrainBorder || k.Type == TypeEnum.Border) && k.Id != node.Id);
                     if(otherGrainCount != 0)
                     {
                         Node neNode = new Node()
@@ -593,6 +597,23 @@ namespace MultiscaleModelling.Simulation
             }
 
 
+        }
+
+        public float GetGBPercent()
+        {
+            float GBNode = 0;
+            float max = _configuration.Width * _configuration.Height;
+            for (int x = 1; x < _configuration.Width; x++)
+            {
+                for (int y = 1; y < _configuration.Height; y++)
+                {
+                    var node = _mapController.GetNode(x, y);
+                    if (node.Type == TypeEnum.GrainBorder)
+                        GBNode++;
+                }
+            }
+            return GBNode / max * 100;
+            //labelGBPer
         }
     }
 }

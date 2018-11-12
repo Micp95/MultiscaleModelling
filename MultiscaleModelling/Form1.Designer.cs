@@ -76,6 +76,8 @@
             this.label17 = new System.Windows.Forms.Label();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.buttonRemoveColors = new System.Windows.Forms.Button();
+            this.label18 = new System.Windows.Forms.Label();
+            this.labelGBPer = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHeight)).BeginInit();
@@ -120,9 +122,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(333, 111);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(80, 13);
+            this.label3.Size = new System.Drawing.Size(103, 13);
             this.label3.TabIndex = 5;
-            this.label3.Text = "Neighbourhood";
+            this.label3.Text = "Neighbourhood type";
             this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // comboBoxNeighbourhood
@@ -142,7 +144,6 @@
             // 
             this.comboBoxBC.FormattingEnabled = true;
             this.comboBoxBC.Items.AddRange(new object[] {
-            "Periodical",
             "Non-periodical"});
             this.comboBoxBC.Location = new System.Drawing.Point(438, 135);
             this.comboBoxBC.Name = "comboBoxBC";
@@ -331,14 +332,14 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(107, 368);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(101, 13);
+            this.label6.Size = new System.Drawing.Size(96, 13);
             this.label6.TabIndex = 17;
-            this.label6.Text = "Growing - simulation";
+            this.label6.Text = "Growth - simulation";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(409, 240);
+            this.label7.Location = new System.Drawing.Point(404, 206);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(54, 13);
             this.label7.TabIndex = 18;
@@ -346,7 +347,7 @@
             // 
             // numericSizeOfInclusions
             // 
-            this.numericSizeOfInclusions.Location = new System.Drawing.Point(439, 282);
+            this.numericSizeOfInclusions.Location = new System.Drawing.Point(434, 248);
             this.numericSizeOfInclusions.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -368,7 +369,7 @@
             // 
             // numericAmountOfInclusions
             // 
-            this.numericAmountOfInclusions.Location = new System.Drawing.Point(439, 256);
+            this.numericAmountOfInclusions.Location = new System.Drawing.Point(434, 222);
             this.numericAmountOfInclusions.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -391,7 +392,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(334, 289);
+            this.label8.Location = new System.Drawing.Point(329, 255);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(88, 13);
             this.label8.TabIndex = 20;
@@ -400,7 +401,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(334, 263);
+            this.label9.Location = new System.Drawing.Point(329, 229);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(104, 13);
             this.label9.TabIndex = 19;
@@ -412,7 +413,7 @@
             this.comboBoxTypeOfInclusion.Items.AddRange(new object[] {
             "Circle",
             "Square"});
-            this.comboBoxTypeOfInclusion.Location = new System.Drawing.Point(439, 308);
+            this.comboBoxTypeOfInclusion.Location = new System.Drawing.Point(434, 274);
             this.comboBoxTypeOfInclusion.Name = "comboBoxTypeOfInclusion";
             this.comboBoxTypeOfInclusion.Size = new System.Drawing.Size(126, 21);
             this.comboBoxTypeOfInclusion.TabIndex = 24;
@@ -420,7 +421,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(334, 316);
+            this.label10.Location = new System.Drawing.Point(329, 282);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(87, 13);
             this.label10.TabIndex = 23;
@@ -428,7 +429,7 @@
             // 
             // buttonAddInclusions
             // 
-            this.buttonAddInclusions.Location = new System.Drawing.Point(337, 338);
+            this.buttonAddInclusions.Location = new System.Drawing.Point(332, 304);
             this.buttonAddInclusions.Name = "buttonAddInclusions";
             this.buttonAddInclusions.Size = new System.Drawing.Size(228, 25);
             this.buttonAddInclusions.TabIndex = 25;
@@ -458,9 +459,9 @@
             this.label11.AutoSize = true;
             this.label11.Location = new System.Drawing.Point(333, 164);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(55, 13);
+            this.label11.Size = new System.Drawing.Size(92, 13);
             this.label11.TabIndex = 26;
-            this.label11.Text = "Probability";
+            this.label11.Text = "Growth Probability";
             // 
             // comboBoxStructureType
             // 
@@ -553,7 +554,7 @@
             // 
             // buttonGenerateGB
             // 
-            this.buttonGenerateGB.Location = new System.Drawing.Point(570, 228);
+            this.buttonGenerateGB.Location = new System.Drawing.Point(571, 251);
             this.buttonGenerateGB.Name = "buttonGenerateGB";
             this.buttonGenerateGB.Size = new System.Drawing.Size(232, 25);
             this.buttonGenerateGB.TabIndex = 36;
@@ -564,7 +565,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(567, 206);
+            this.label16.Location = new System.Drawing.Point(568, 229);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(59, 13);
             this.label16.TabIndex = 38;
@@ -572,7 +573,7 @@
             // 
             // numericUpDownGBSize
             // 
-            this.numericUpDownGBSize.Location = new System.Drawing.Point(676, 202);
+            this.numericUpDownGBSize.Location = new System.Drawing.Point(677, 225);
             this.numericUpDownGBSize.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -595,7 +596,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(641, 186);
+            this.label17.Location = new System.Drawing.Point(642, 209);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(81, 13);
             this.label17.TabIndex = 39;
@@ -608,7 +609,7 @@
             // 
             // buttonRemoveColors
             // 
-            this.buttonRemoveColors.Location = new System.Drawing.Point(570, 259);
+            this.buttonRemoveColors.Location = new System.Drawing.Point(571, 282);
             this.buttonRemoveColors.Name = "buttonRemoveColors";
             this.buttonRemoveColors.Size = new System.Drawing.Size(232, 25);
             this.buttonRemoveColors.TabIndex = 40;
@@ -616,11 +617,30 @@
             this.buttonRemoveColors.UseVisualStyleBackColor = true;
             this.buttonRemoveColors.Click += new System.EventHandler(this.buttonRemoveColors_Click);
             // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(568, 316);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(33, 13);
+            this.label18.TabIndex = 41;
+            this.label18.Text = "GB%:";
+            // 
+            // labelGBPer
+            // 
+            this.labelGBPer.AutoSize = true;
+            this.labelGBPer.Location = new System.Drawing.Point(641, 316);
+            this.labelGBPer.Name = "labelGBPer";
+            this.labelGBPer.Size = new System.Drawing.Size(0, 13);
+            this.labelGBPer.TabIndex = 42;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(814, 421);
+            this.Controls.Add(this.labelGBPer);
+            this.Controls.Add(this.label18);
             this.Controls.Add(this.buttonRemoveColors);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.label16);
@@ -731,6 +751,8 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.Button buttonRemoveColors;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label labelGBPer;
     }
 }
 

@@ -129,6 +129,10 @@ namespace MultiscaleModelling
 
             _grainsSelection = false;
             timer2.Enabled = false;
+
+            numericUpDownGBSize.Enabled = enable;
+            buttonGenerateGB.Enabled = enable;
+            buttonRemoveColors.Enabled = enable;
         }
 
         private void label3_Click(object sender, EventArgs e)
@@ -340,6 +344,8 @@ namespace MultiscaleModelling
             var config = GetConfiguration();
             _currentSimullation.AddBoundariesForGrains(config);
             RenderStep();
+
+            labelGBPer.Text = _currentSimullation.GetGBPercent().ToString();
         }
 
         private void buttonRemoveColors_Click(object sender, EventArgs e)
