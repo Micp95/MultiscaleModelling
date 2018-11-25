@@ -35,6 +35,7 @@ namespace MultiscaleModelling
             ChangeEnableSubstructure(false);
 
             exportToolStripMenuItem.Enabled = false;
+            radioButtonAC.Select();
         }
 
         private Configuration GetConfiguration()
@@ -42,15 +43,18 @@ namespace MultiscaleModelling
 
             return new Configuration()
             {
-                Width= (int)numericUpDownWidth.Value,
-                Height= (int)numericUpDownHeight.Value,
-                BoundaryConditions=(BCEnum)comboBoxBC.SelectedIndex,
-                Neighbourhood=(NeighbourhoodEnum)comboBoxNeighbourhood.SelectedIndex,
-                NumberOfGrains= (int)numericUpDownNumberOfGrain.Value,
+                Width = (int)numericUpDownWidth.Value,
+                Height = (int)numericUpDownHeight.Value,
+                BoundaryConditions = (BCEnum)comboBoxBC.SelectedIndex,
+                Neighbourhood = (NeighbourhoodEnum)comboBoxNeighbourhood.SelectedIndex,
+                NumberOfGrains = (int)numericUpDownNumberOfGrain.Value,
                 MooreProbability = (int)numericMooreProbability.Value,
                 StructureTypeEnume = (StructureTypeEnume)comboBoxStructureType.SelectedIndex,
                 NumberOfSubGrains = (int)numericUpDownSubGrainsNum.Value,
                 SizeOfGB = (int)numericUpDownGBSize.Value,
+                IsMC = radioButtonMC.Checked,
+                J = (double)numericUpDownJ.Value,
+                MCIterations = (int)numericUpDownMCIterations.Value
             };
         }
 
@@ -74,7 +78,11 @@ namespace MultiscaleModelling
             var config = GetConfiguration();
 
             _currentSimullation.Initialize(config);
-            _currentSimullation.SeedGrains(config.NumberOfGrains);
+            if (!config.IsMC)
+                _currentSimullation.SeedGrains(config.NumberOfGrains);
+            else
+                _currentSimullation.FirstStepMC();
+
             _isStartedSimulation = true;
         }
         private void Render(Bitmap map)
@@ -107,6 +115,8 @@ namespace MultiscaleModelling
             comboBoxNeighbourhood.Enabled = enable;
             comboBoxBC.Enabled = enable;
             numericMooreProbability.Enabled = enable;
+            numericUpDownMCIterations.Enabled = enable;
+            numericUpDownJ.Enabled = enable;
         }
         private void ChangeEnableInclusionsOptions(bool enable)
         {
@@ -352,6 +362,11 @@ namespace MultiscaleModelling
         {
             _currentSimullation.RemoveGrainsColors();
             RenderStep();
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

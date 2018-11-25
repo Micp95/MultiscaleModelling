@@ -29,7 +29,7 @@ namespace MultiscaleModelling.Interfaces
         void StartGenerateSubstructure(Configuration config);
         void AddBoundariesForGrains(Configuration config);
         void RemoveGrainsColors();
-
         float GetGBPercent();
+        void FirstStepMC();
     }
 }

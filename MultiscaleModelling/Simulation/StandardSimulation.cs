@@ -12,19 +12,16 @@ namespace MultiscaleModelling.Simulation
 {
     class StandardSimulation : ISimulation
     {
-        MapController _mapController;
-        Configuration _configuration;
-        Random _random;
-        List<Grain> _grains;
+        private MapController _mapController;
+        private Configuration _configuration;
+        private Random _random;
+        private List<Grain> _grains;
         private bool _endSimulation;
         private bool _isMapEmpty;
         private int _currentGrainId;
-        List<Grain> _selectedGrains;
+        private int _currentMCIteration;
+        private List<Grain> _selectedGrains;
 
-        public Bitmap GetBitmap()
-        {
-            return _mapController.GetBitmap();
-        }
 
         public StandardSimulation()
         {
@@ -34,6 +31,13 @@ namespace MultiscaleModelling.Simulation
             _isMapEmpty = true;
             _currentGrainId = 100;
         }
+
+
+        public Bitmap GetBitmap()
+        {
+            return _mapController.GetBitmap();
+        }
+
         public void Initialize(Configuration config)
         {
             if(_configuration == null || _configuration.Width != config.Width || _configuration.Width != config.Height)
@@ -49,6 +53,39 @@ namespace MultiscaleModelling.Simulation
             _selectedGrains.Clear();
         }
 
+        public void FirstStepMC()
+        {
+            _grains = new List<Grain>();
+            int grainsToGenerate = _configuration.NumberOfGrains;
+            while (grainsToGenerate > 0)
+            {
+                var grain = GetRandomGrain();
+                _grains.Add(grain);
+                grainsToGenerate--;
+            }
+
+
+            for (int x = 1; x <= _configuration.Width; x++)
+            {
+                for (int y = 1; y <= _configuration.Height; y++)
+                {
+                    var grain = _grains[_random.Next(_grains.Count)];
+                    var node = new Node()
+                    {
+                        X=x,
+                        Y=y,
+                        Id= grain.Id,
+                        Color= grain.Color,
+                        Type=TypeEnum.Grain
+                    };
+                    _mapController.SetNode(x, y, node);
+                }
+            }
+            _mapController.Commit();
+
+            _currentMCIteration = _configuration.MCIterations - 1;
+        }
+
         public void Restart()
         {
             _mapController = new MapController(_configuration.Width, _configuration.Height);
@@ -58,10 +95,6 @@ namespace MultiscaleModelling.Simulation
             _selectedGrains.Clear();
         }
 
-        public bool IsMapEmpty()
-        {
-            return _isMapEmpty;
-        }
         public void SeedGrains(int numberOfGrains)
         {
             int grainsToGenerate = numberOfGrains;
@@ -79,7 +112,10 @@ namespace MultiscaleModelling.Simulation
             GenerateListOfGrains();
         }
 
-
+        public bool IsMapEmpty()
+        {
+            return _isMapEmpty;
+        }
 
         public void AddInclusions(ConfigurationInclusions config)
         {
@@ -93,22 +129,249 @@ namespace MultiscaleModelling.Simulation
             }
             _isMapEmpty = false;
         }
+
         public void NextStep()
         {
+            if (_configuration.IsMC)
+            {
+                NextStepMC();
+                return;
+            }
+
             _endSimulation = true;
             for (int x = 1; x <= _configuration.Width; x++)
             {
                 for (int y = 1; y <= _configuration.Height; y++)
                 {
-                    ProcessCoordinate(x, y);
+                        ProcessCoordinate(x, y);
                 }
             }
             _mapController.Commit();
+
 
             if (_endSimulation)
                 EndSubstructureSimulation();
         }
 
+        public void ExportToFile(FileTypeEnum type, string fileName)
+        {
+            _mapController.ExportToFile(fileName, type);
+        }
+
+        public void ImportFromFile(FileTypeEnum type, string fileName)
+        {
+            if (_mapController == null)
+                _mapController = new MapController();
+            _mapController.ImportFromFile(fileName, type);
+
+            if (_configuration == null)
+            {
+                _configuration = new Configuration()
+                {
+                    BoundaryConditions = BCEnum.NonPeriodical,
+                    Neighbourhood = NeighbourhoodEnum.Moore
+                };
+            }
+
+            _endSimulation = true;
+            _isMapEmpty = false;
+            _configuration.Width = _mapController.Width - 2;
+            _configuration.Height = _mapController.Height - 2;
+
+            GenerateListOfGrains();
+            _configuration.NumberOfGrains = _grains.Count;
+        }
+
+        public bool IsEndSimulation()
+        {
+            return _endSimulation;
+        }
+
+        public void AddOrRemoveGrainsToSelectLis(int x, int y)
+        {
+            var node = _mapController.GetNode(x, y);
+            if (node.Id > 100)
+            {
+                if (!_selectedGrains.Any(k => k.Id == node.Id))
+                {
+                    _selectedGrains.Add(new Grain()
+                    {
+                        Color = node.Color,
+                        Id = node.Id
+                    });
+                }
+                else
+                {
+                    var toRemove = _selectedGrains.FirstOrDefault(k => k.Id == node.Id);
+                    _selectedGrains.Remove(toRemove);
+                }
+            }
+        }
+
+        public void StartGenerateSubstructure(Configuration config)
+        {
+            Grain newGrain = null;
+            if (config.StructureTypeEnume == StructureTypeEnume.DualPhase)
+            {
+                newGrain = GetRandomGrain();
+            }
+
+            for (int x = 1; x <= _configuration.Width; x++)
+            {
+                for (int y = 1; y <= _configuration.Height; y++)
+                {
+                    var node = _mapController.GetNode(x, y);
+                    if (_selectedGrains.Any(k => k.Id == node.Id))
+                    {
+                        if (newGrain == null)
+                        {
+                            node.Type = TypeEnum.OldGrain;
+                            _mapController.SetNode(x, y, node);
+                        }
+                        else
+                        {
+                            _mapController.SetNode(x, y, new Node()
+                            {
+                                Color = newGrain.Color,
+                                Id = newGrain.Id,
+                                Type = TypeEnum.OldGrain,
+                                X = x,
+                                Y = y
+                            });
+                        }
+                    }
+                    else if (node.Type == TypeEnum.Inclusion || node.Type == TypeEnum.GrainBorder)
+                    {
+                        _mapController.SetNode(x, y, node);
+                    }
+                    else
+                    {
+                        _mapController.SetNode(x, y, _mapController.GetEmptyNode(x, y));
+                    }
+                }
+            }
+            _mapController.Commit();
+            _endSimulation = false;
+            _mapController.CopyMap();
+
+            if (config.StructureTypeEnume == StructureTypeEnume.DualPhase)
+            {
+                _selectedGrains = new List<Grain>();
+                _selectedGrains.Add(newGrain);
+            }
+        }
+
+        public Configuration GetConfiguration()
+        {
+            return _configuration;
+        }
+
+        public void RestartSelectedList()
+        {
+            _selectedGrains = new List<Grain>();
+        }
+
+        public Bitmap GetBitmapGrainsSelection(bool visibility)
+        {
+            if (visibility)
+                return GetBitmap();
+            else
+            {
+                var colorList = new List<int>();
+                foreach (var grain in _selectedGrains)
+                {
+                    colorList.Add(grain.Id);
+                }
+
+                return _mapController.GetBitmapWithHiddenColors(colorList);
+            }
+
+        }
+
+        public void AddBoundariesForGrains(Configuration config)
+        {
+            var grainList = new List<Grain>();
+
+            if (_selectedGrains.Any())
+                grainList = _selectedGrains;
+            else
+                grainList = _grains;
+
+            foreach (var grain in grainList)
+            {
+                AddBorderForGrain(grain, config.SizeOfGB);
+            }
+        }
+
+        public void RemoveGrainsColors()
+        {
+            _mapController.CopyMap();
+            for (int x = 1; x <= _configuration.Width; x++)
+            {
+                for (int y = 1; y <= _configuration.Height; y++)
+                {
+                    var node = _mapController.GetNode(x, y);
+                    if (node.Type == TypeEnum.Grain)
+                    {
+                        var empty = _mapController.GetEmptyNode(x, y);
+                        _mapController.SetNode(x, y, empty);
+                    }
+                }
+            }
+            _mapController.Commit();
+        }
+
+        public float GetGBPercent()
+        {
+            float GBNode = 0;
+            float max = _configuration.Width * _configuration.Height;
+            for (int x = 1; x < _configuration.Width; x++)
+            {
+                for (int y = 1; y < _configuration.Height; y++)
+                {
+                    var node = _mapController.GetNode(x, y);
+                    if (node.Type == TypeEnum.GrainBorder)
+                        GBNode++;
+                }
+            }
+            return GBNode / max * 100;
+        }
+
+
+
+        private void NextStepMC()
+        {
+
+            List<Point> postitionToRandom = new List<Point>();
+            for (int x = 1; x <= _configuration.Width; x++)
+                for (int y = 1; y <= _configuration.Height; y++)
+                    postitionToRandom.Add(new Point(x, y));
+
+
+            _mapController.CopyMap();
+            do
+            {
+                int randIndex = _random.Next(postitionToRandom.Count);
+
+                ProcessCoordinateMonteCarlo(postitionToRandom[randIndex].X, postitionToRandom[randIndex].Y);
+
+                postitionToRandom.RemoveAt(randIndex);
+            } while (postitionToRandom.Count>0);
+            _mapController.Commit();
+
+
+
+            _currentMCIteration--;
+
+            if(_currentMCIteration > 0)
+                _endSimulation = false;
+            else
+                _endSimulation = true;
+
+
+            if (_endSimulation)
+                EndSubstructureSimulation();
+        }
 
         private void AddInclusion(InclusionType type, int size)
         {
@@ -137,6 +400,7 @@ namespace MultiscaleModelling.Simulation
                 }
             }
         }
+
         private void GrowSquareInclusion(Node seed, int size)
         {
 
@@ -152,6 +416,7 @@ namespace MultiscaleModelling.Simulation
             }
 
         }
+
         private Node GetSeedForInclusion ()
         {
             if (IsEndSimulation())
@@ -212,6 +477,46 @@ namespace MultiscaleModelling.Simulation
 
             return edgesNodes;
         }
+
+        private void ProcessCoordinateMonteCarlo(int x, int y)
+        {
+            var neighbourhoodType = _configuration.Neighbourhood == NeighbourhoodEnum.Moore2 ? NeighbourhoodEnum.Moore : _configuration.Neighbourhood;
+            var node = _mapController.GetCurrentNode(x, y);
+            var allNeighbourhoods = _mapController.GetNeighbourhoods(x, y, neighbourhoodType, true).Where(k => k.Type == TypeEnum.Grain).ToList();
+            var otherNeighbourhoods = allNeighbourhoods.Where(k=>k.Id != node.Id).ToList();
+            var otherIds = otherNeighbourhoods.Select(k=>k.Id).Distinct();
+
+            if (otherIds.Count() == 0)
+                return;
+
+            double energy_before = GetEnrgy(node.Id,x,y, allNeighbourhoods);
+
+            int randNodeId = otherIds.ElementAt(_random.Next(otherIds.Count()));
+            var newNode = otherNeighbourhoods.FirstOrDefault(k=>k.Id == randNodeId);
+
+            double energy_after = GetEnrgy(newNode.Id, x, y, allNeighbourhoods);
+
+            if(energy_after - energy_before <= 0)
+            {
+                var nodeXd = new Node()
+                {
+                    X = x,
+                    Y = y,
+                    Id = newNode.Id,
+                    Color = newNode.Color,
+                    Type = newNode.Type
+                };
+                _mapController.SetNode(x, y, nodeXd);
+            }
+        }
+
+        private double GetEnrgy(int id, int x, int y, List<Node> neighbourhoods)
+        {
+            int countOfOthers = neighbourhoods.Count(k=>k.Id != id);
+
+            return _configuration.J * (double)countOfOthers;
+        }
+
         private void ProcessCoordinate(int x, int y)
         {
             var node = _mapController.GetNode(x, y);
@@ -265,6 +570,7 @@ namespace MultiscaleModelling.Simulation
 
             return node;
         }
+
         private Node GetNodeforModificationMethod(Node node)
         {
             var mooreNeighbourhood = GetListOfGrainNeighbourhood(node, NeighbourhoodEnum.Moore);
@@ -335,6 +641,7 @@ namespace MultiscaleModelling.Simulation
 
             _mapController.SetNode(x, y, node);
         }
+
         private Grain GetRandomGrain()
         {
             int id = _currentGrainId++;
@@ -354,108 +661,6 @@ namespace MultiscaleModelling.Simulation
             };
         }
 
-        public void ExportToFile(FileTypeEnum type, string fileName)
-        {
-            _mapController.ExportToFile(fileName, type);
-        }
-
-        public void ImportFromFile(FileTypeEnum type, string fileName)
-        {
-            if (_mapController == null)
-                _mapController = new MapController();
-            _mapController.ImportFromFile(fileName, type);
-
-            if(_configuration == null)
-            {
-                _configuration = new Configuration()
-                {
-                    BoundaryConditions = BCEnum.NonPeriodical,
-                    Neighbourhood = NeighbourhoodEnum.Moore
-                };
-            }
-
-            _endSimulation = true;
-            _isMapEmpty = false;
-            _configuration.Width = _mapController.Width-2;
-            _configuration.Height = _mapController.Height-2;
-
-            GenerateListOfGrains();
-            _configuration.NumberOfGrains = _grains.Count;
-        }
-
-        public bool IsEndSimulation()
-        {
-            return _endSimulation;
-        }
-
-        public void AddOrRemoveGrainsToSelectLis(int x, int y)
-        {
-            var node = _mapController.GetNode(x, y);
-            if(node.Id > 100)
-            {
-                if(!_selectedGrains.Any(k => k.Id == node.Id))
-                {
-                    _selectedGrains.Add(new Grain()
-                    {
-                        Color = node.Color,
-                        Id = node.Id
-                    });
-                }else{
-                    var toRemove = _selectedGrains.FirstOrDefault(k => k.Id == node.Id);
-                    _selectedGrains.Remove(toRemove);
-                }
-            }
-        }
-
-        public void StartGenerateSubstructure(Configuration config)
-        {
-            Grain newGrain = null;
-            if(config.StructureTypeEnume == StructureTypeEnume.DualPhase)
-            {
-                newGrain = GetRandomGrain();
-            }
-
-            for (int x = 1; x <= _configuration.Width; x++)
-            {
-                for (int y = 1; y <= _configuration.Height; y++)
-                {
-                    var node =_mapController.GetNode(x, y);
-                    if(_selectedGrains.Any(k=>k.Id == node.Id)){
-                        if(newGrain == null)
-                        {
-                            node.Type = TypeEnum.OldGrain;
-                            _mapController.SetNode(x, y, node);
-                        }else
-                        {
-                            _mapController.SetNode(x, y, new Node()
-                            {
-                                Color= newGrain.Color,
-                                Id=newGrain.Id,
-                                Type=TypeEnum.OldGrain,
-                                X=x,
-                                Y=y
-                            });
-                        }
-                    }else if (node.Type ==TypeEnum.Inclusion || node.Type == TypeEnum.GrainBorder)
-                    {
-                        _mapController.SetNode(x, y, node);
-                    }
-                    else {
-                        _mapController.SetNode(x, y, _mapController.GetEmptyNode(x, y));
-                    }
-                }
-            }
-            _mapController.Commit();
-            _endSimulation = false;
-            _mapController.CopyMap();
-
-            if (config.StructureTypeEnume == StructureTypeEnume.DualPhase)
-            {
-                _selectedGrains = new List<Grain>();
-                _selectedGrains.Add(newGrain);
-            }
-        }
-
         private void EndSubstructureSimulation()
         {
             for (int x = 1; x <= _configuration.Width; x++)
@@ -467,11 +672,6 @@ namespace MultiscaleModelling.Simulation
                         node.Type = TypeEnum.Grain;
                 }
             }
-        }
-
-        public Configuration GetConfiguration()
-        {
-            return _configuration;
         }
 
         private void GenerateListOfGrains()
@@ -498,61 +698,6 @@ namespace MultiscaleModelling.Simulation
             _currentGrainId++;
         }
 
-        public void RestartSelectedList()
-        {
-            _selectedGrains = new List<Grain>();
-        }
-
-        public Bitmap GetBitmapGrainsSelection(bool visibility)
-        {
-            if (visibility)
-                return GetBitmap();
-            else
-            {
-                var colorList = new List<int>();
-                foreach(var grain in _selectedGrains)
-                {
-                    colorList.Add(grain.Id);
-                }
-
-                return _mapController.GetBitmapWithHiddenColors(colorList);
-            }
-
-        }
-
-        public void AddBoundariesForGrains(Configuration config)
-        {
-            var grainList = new List<Grain>();
-
-            if (_selectedGrains.Any())
-                grainList = _selectedGrains;
-            else
-                grainList = _grains;
-
-            foreach (var grain in grainList)
-            {
-                AddBorderForGrain(grain, config.SizeOfGB);
-            }
-        }
-
-        public void RemoveGrainsColors()
-        {
-            _mapController.CopyMap();
-            for (int x = 1; x <= _configuration.Width; x++)
-            {
-                for (int y = 1; y <= _configuration.Height; y++)
-                {
-                    var node = _mapController.GetNode(x, y);
-                    if (node.Type == TypeEnum.Grain)
-                    {
-                        var empty = _mapController.GetEmptyNode(x, y);
-                        _mapController.SetNode(x, y, empty);
-                    }
-                }
-            }
-            _mapController.Commit();
-        }
-
         private void AddBorderForGrain(Grain grain, int size)
         {
             List<Node> grainNodes = new List<Node>();
@@ -562,7 +707,7 @@ namespace MultiscaleModelling.Simulation
                 for (int y = 1; y <= _configuration.Height; y++)
                 {
                     var node = _mapController.GetNode(x, y);
-                    if(node.Id == grain.Id)
+                    if (node.Id == grain.Id)
                         grainNodes.Add(node);
                 }
             }
@@ -575,7 +720,7 @@ namespace MultiscaleModelling.Simulation
                 {
                     var neighbourhood = _mapController.GetNeighbourhoods(node.X, node.Y, NeighbourhoodEnum.Moore);
                     int otherGrainCount = neighbourhood.Count(k => (k.Type == TypeEnum.Grain || k.Type == TypeEnum.GrainBorder || k.Type == TypeEnum.Border) && k.Id != node.Id);
-                    if(otherGrainCount != 0)
+                    if (otherGrainCount != 0)
                     {
                         Node neNode = new Node()
                         {
@@ -586,7 +731,8 @@ namespace MultiscaleModelling.Simulation
                             Id = 6,
                         };
                         _mapController.SetNode(node.X, node.Y, neNode);
-                    }else
+                    }
+                    else
                     {
                         grainNodesNew.Add(node);
                     }
@@ -599,21 +745,5 @@ namespace MultiscaleModelling.Simulation
 
         }
 
-        public float GetGBPercent()
-        {
-            float GBNode = 0;
-            float max = _configuration.Width * _configuration.Height;
-            for (int x = 1; x < _configuration.Width; x++)
-            {
-                for (int y = 1; y < _configuration.Height; y++)
-                {
-                    var node = _mapController.GetNode(x, y);
-                    if (node.Type == TypeEnum.GrainBorder)
-                        GBNode++;
-                }
-            }
-            return GBNode / max * 100;
-            //labelGBPer
-        }
     }
 }

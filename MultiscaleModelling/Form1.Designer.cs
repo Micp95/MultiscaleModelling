@@ -78,6 +78,13 @@
             this.buttonRemoveColors = new System.Windows.Forms.Button();
             this.label18 = new System.Windows.Forms.Label();
             this.labelGBPer = new System.Windows.Forms.Label();
+            this.numericUpDownJ = new System.Windows.Forms.NumericUpDown();
+            this.label19 = new System.Windows.Forms.Label();
+            this.radioButtonAC = new System.Windows.Forms.RadioButton();
+            this.radioButtonMC = new System.Windows.Forms.RadioButton();
+            this.numericUpDownMCIterations = new System.Windows.Forms.NumericUpDown();
+            this.label20 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHeight)).BeginInit();
@@ -88,6 +95,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericMooreProbability)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSubGrainsNum)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownGBSize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownJ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMCIterations)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -339,7 +349,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(404, 206);
+            this.label7.Location = new System.Drawing.Point(654, 316);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(54, 13);
             this.label7.TabIndex = 18;
@@ -347,7 +357,7 @@
             // 
             // numericSizeOfInclusions
             // 
-            this.numericSizeOfInclusions.Location = new System.Drawing.Point(434, 248);
+            this.numericSizeOfInclusions.Location = new System.Drawing.Point(671, 358);
             this.numericSizeOfInclusions.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -369,7 +379,7 @@
             // 
             // numericAmountOfInclusions
             // 
-            this.numericAmountOfInclusions.Location = new System.Drawing.Point(434, 222);
+            this.numericAmountOfInclusions.Location = new System.Drawing.Point(671, 332);
             this.numericAmountOfInclusions.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -392,7 +402,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(329, 255);
+            this.label8.Location = new System.Drawing.Point(566, 365);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(88, 13);
             this.label8.TabIndex = 20;
@@ -401,7 +411,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(329, 229);
+            this.label9.Location = new System.Drawing.Point(566, 339);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(104, 13);
             this.label9.TabIndex = 19;
@@ -413,7 +423,7 @@
             this.comboBoxTypeOfInclusion.Items.AddRange(new object[] {
             "Circle",
             "Square"});
-            this.comboBoxTypeOfInclusion.Location = new System.Drawing.Point(434, 274);
+            this.comboBoxTypeOfInclusion.Location = new System.Drawing.Point(671, 384);
             this.comboBoxTypeOfInclusion.Name = "comboBoxTypeOfInclusion";
             this.comboBoxTypeOfInclusion.Size = new System.Drawing.Size(126, 21);
             this.comboBoxTypeOfInclusion.TabIndex = 24;
@@ -421,7 +431,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(329, 282);
+            this.label10.Location = new System.Drawing.Point(566, 392);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(87, 13);
             this.label10.TabIndex = 23;
@@ -429,7 +439,7 @@
             // 
             // buttonAddInclusions
             // 
-            this.buttonAddInclusions.Location = new System.Drawing.Point(332, 304);
+            this.buttonAddInclusions.Location = new System.Drawing.Point(569, 414);
             this.buttonAddInclusions.Name = "buttonAddInclusions";
             this.buttonAddInclusions.Size = new System.Drawing.Size(228, 25);
             this.buttonAddInclusions.TabIndex = 25;
@@ -554,7 +564,7 @@
             // 
             // buttonGenerateGB
             // 
-            this.buttonGenerateGB.Location = new System.Drawing.Point(571, 251);
+            this.buttonGenerateGB.Location = new System.Drawing.Point(570, 230);
             this.buttonGenerateGB.Name = "buttonGenerateGB";
             this.buttonGenerateGB.Size = new System.Drawing.Size(232, 25);
             this.buttonGenerateGB.TabIndex = 36;
@@ -565,7 +575,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(568, 229);
+            this.label16.Location = new System.Drawing.Point(567, 208);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(59, 13);
             this.label16.TabIndex = 38;
@@ -573,7 +583,7 @@
             // 
             // numericUpDownGBSize
             // 
-            this.numericUpDownGBSize.Location = new System.Drawing.Point(677, 225);
+            this.numericUpDownGBSize.Location = new System.Drawing.Point(676, 204);
             this.numericUpDownGBSize.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -596,7 +606,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(642, 209);
+            this.label17.Location = new System.Drawing.Point(641, 188);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(81, 13);
             this.label17.TabIndex = 39;
@@ -609,7 +619,7 @@
             // 
             // buttonRemoveColors
             // 
-            this.buttonRemoveColors.Location = new System.Drawing.Point(571, 282);
+            this.buttonRemoveColors.Location = new System.Drawing.Point(570, 261);
             this.buttonRemoveColors.Name = "buttonRemoveColors";
             this.buttonRemoveColors.Size = new System.Drawing.Size(232, 25);
             this.buttonRemoveColors.TabIndex = 40;
@@ -620,7 +630,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(568, 316);
+            this.label18.Location = new System.Drawing.Point(567, 295);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(33, 13);
             this.label18.TabIndex = 41;
@@ -629,16 +639,123 @@
             // labelGBPer
             // 
             this.labelGBPer.AutoSize = true;
-            this.labelGBPer.Location = new System.Drawing.Point(641, 316);
+            this.labelGBPer.Location = new System.Drawing.Point(640, 295);
             this.labelGBPer.Name = "labelGBPer";
             this.labelGBPer.Size = new System.Drawing.Size(0, 13);
             this.labelGBPer.TabIndex = 42;
+            // 
+            // numericUpDownJ
+            // 
+            this.numericUpDownJ.DecimalPlaces = 2;
+            this.numericUpDownJ.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownJ.Location = new System.Drawing.Point(439, 188);
+            this.numericUpDownJ.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownJ.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownJ.Name = "numericUpDownJ";
+            this.numericUpDownJ.Size = new System.Drawing.Size(126, 20);
+            this.numericUpDownJ.TabIndex = 44;
+            this.numericUpDownJ.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(334, 190);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(31, 13);
+            this.label19.TabIndex = 43;
+            this.label19.Text = "MC J";
+            // 
+            // radioButtonAC
+            // 
+            this.radioButtonAC.AutoSize = true;
+            this.radioButtonAC.Location = new System.Drawing.Point(6, 20);
+            this.radioButtonAC.Name = "radioButtonAC";
+            this.radioButtonAC.Size = new System.Drawing.Size(107, 17);
+            this.radioButtonAC.TabIndex = 45;
+            this.radioButtonAC.TabStop = true;
+            this.radioButtonAC.Text = "Cellular Automata";
+            this.radioButtonAC.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonMC
+            // 
+            this.radioButtonMC.AutoSize = true;
+            this.radioButtonMC.Location = new System.Drawing.Point(6, 43);
+            this.radioButtonMC.Name = "radioButtonMC";
+            this.radioButtonMC.Size = new System.Drawing.Size(82, 17);
+            this.radioButtonMC.TabIndex = 46;
+            this.radioButtonMC.TabStop = true;
+            this.radioButtonMC.Text = "Monte Carlo";
+            this.radioButtonMC.UseVisualStyleBackColor = true;
+            this.radioButtonMC.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            // 
+            // numericUpDownMCIterations
+            // 
+            this.numericUpDownMCIterations.Location = new System.Drawing.Point(439, 211);
+            this.numericUpDownMCIterations.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numericUpDownMCIterations.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownMCIterations.Name = "numericUpDownMCIterations";
+            this.numericUpDownMCIterations.Size = new System.Drawing.Size(126, 20);
+            this.numericUpDownMCIterations.TabIndex = 48;
+            this.numericUpDownMCIterations.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(334, 213);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(74, 13);
+            this.label20.TabIndex = 47;
+            this.label20.Text = "MC interations";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.radioButtonMC);
+            this.groupBox1.Controls.Add(this.radioButtonAC);
+            this.groupBox1.Location = new System.Drawing.Point(361, 242);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(181, 66);
+            this.groupBox1.TabIndex = 49;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Simulation Type";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(814, 421);
+            this.ClientSize = new System.Drawing.Size(814, 461);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.numericUpDownMCIterations);
+            this.Controls.Add(this.label20);
+            this.Controls.Add(this.numericUpDownJ);
+            this.Controls.Add(this.label19);
             this.Controls.Add(this.labelGBPer);
             this.Controls.Add(this.label18);
             this.Controls.Add(this.buttonRemoveColors);
@@ -681,8 +798,8 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
             this.MainMenuStrip = this.menuStrip1;
-            this.MaximumSize = new System.Drawing.Size(830, 460);
-            this.MinimumSize = new System.Drawing.Size(830, 460);
+            this.MaximumSize = new System.Drawing.Size(830, 500);
+            this.MinimumSize = new System.Drawing.Size(830, 500);
             this.Name = "Form1";
             this.Text = "Multiscale Modelling";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -697,6 +814,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericMooreProbability)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSubGrainsNum)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownGBSize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownJ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMCIterations)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -753,6 +874,13 @@
         private System.Windows.Forms.Button buttonRemoveColors;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label labelGBPer;
+        private System.Windows.Forms.NumericUpDown numericUpDownJ;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.RadioButton radioButtonAC;
+        private System.Windows.Forms.RadioButton radioButtonMC;
+        private System.Windows.Forms.NumericUpDown numericUpDownMCIterations;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
 

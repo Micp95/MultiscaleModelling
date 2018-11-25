@@ -68,16 +68,16 @@ namespace MultiscaleModelling.Controllers
         {
             return _previousMap.GetNode(x, y);
         }
-        public List<Node> GetNeighbourhoods(int x, int y, NeighbourhoodEnum type)
+        public List<Node> GetNeighbourhoods(int x, int y, NeighbourhoodEnum type, bool isFromCurrent = false)
         {
             switch (type)
             {
                 case NeighbourhoodEnum.Moore:
-                    return GetMooreNeighbourhoods(x,y);
+                    return GetMooreNeighbourhoods(x,y, isFromCurrent);
                 case NeighbourhoodEnum.VonNeumann:
-                    return GetVonNeumannNeighbourhoods(x,y);
+                    return GetVonNeumannNeighbourhoods(x,y, isFromCurrent);
                 case NeighbourhoodEnum.Cross:
-                    return GetCrossNeighbourhoods(x, y);
+                    return GetCrossNeighbourhoods(x, y, isFromCurrent);
             }
             return new List<Node>();
         }
@@ -225,40 +225,52 @@ namespace MultiscaleModelling.Controllers
         }
 
 
-        private List<Node> GetMooreNeighbourhoods(int x, int y)
+        private List<Node> GetMooreNeighbourhoods(int x, int y, bool isFromCurrent)
         {
+            Map map = _previousMap;
+            if (isFromCurrent)
+                map = _currentMap;
+
             List<Node> neighbourhoods = new List<Node>();
             for(int k = -1; k <= 1; k++)
             {
-                neighbourhoods.Add(_previousMap.GetNode(x + k, y + 1));
-                neighbourhoods.Add(_previousMap.GetNode(x + k, y - 1));
+                neighbourhoods.Add(map.GetNode(x + k, y + 1));
+                neighbourhoods.Add(map.GetNode(x + k, y - 1));
                 if(k != 0)
                 {
-                    neighbourhoods.Add(_previousMap.GetNode(x + k, y));
+                    neighbourhoods.Add(map.GetNode(x + k, y));
                 }
             }
 
             return neighbourhoods;
         }
-        private List<Node> GetVonNeumannNeighbourhoods(int x, int y)
+        private List<Node> GetVonNeumannNeighbourhoods(int x, int y, bool isFromCurrent)
         {
+            Map map = _previousMap;
+            if (isFromCurrent)
+                map = _currentMap;
+
             List<Node> neighbourhoods = new List<Node>();
 
-            neighbourhoods.Add(_previousMap.GetNode(x , y+1));
-            neighbourhoods.Add(_previousMap.GetNode(x-1, y));
-            neighbourhoods.Add(_previousMap.GetNode(x+1, y));
-            neighbourhoods.Add(_previousMap.GetNode(x, y-1));
+            neighbourhoods.Add(map.GetNode(x , y+1));
+            neighbourhoods.Add(map.GetNode(x-1, y));
+            neighbourhoods.Add(map.GetNode(x+1, y));
+            neighbourhoods.Add(map.GetNode(x, y-1));
 
             return neighbourhoods;
         }
-        private List<Node> GetCrossNeighbourhoods(int x, int y)
+        private List<Node> GetCrossNeighbourhoods(int x, int y, bool isFromCurrent)
         {
+            Map map = _previousMap;
+            if (isFromCurrent)
+                map = _currentMap;
+
             List<Node> neighbourhoods = new List<Node>();
 
-            neighbourhoods.Add(_previousMap.GetNode(x-1, y + 1));
-            neighbourhoods.Add(_previousMap.GetNode(x + 1, y+1));
-            neighbourhoods.Add(_previousMap.GetNode(x - 1, y-1));
-            neighbourhoods.Add(_previousMap.GetNode(x + 1, y- 1));
+            neighbourhoods.Add(map.GetNode(x-1, y + 1));
+            neighbourhoods.Add(map.GetNode(x + 1, y+1));
+            neighbourhoods.Add(map.GetNode(x - 1, y-1));
+            neighbourhoods.Add(map.GetNode(x + 1, y- 1));
 
             return neighbourhoods;
         }

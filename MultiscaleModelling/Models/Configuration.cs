@@ -17,5 +17,8 @@ namespace MultiscaleModelling.Models
         public NeighbourhoodEnum Neighbourhood { get; set; }
         public int MooreProbability { get; set; }
         public StructureTypeEnume StructureTypeEnume { get; set; }
+        public double J { get; set; }
+        public bool IsMC { get; set; }
+        public int MCIterations { get; set; }
     }
 }
