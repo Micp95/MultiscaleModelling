@@ -15,10 +15,11 @@ namespace MultiscaleModelling.Interfaces
         void Restart();
         Bitmap GetBitmap();
         Bitmap GetBitmapGrainsSelection(bool visibility);
+        Bitmap GetEnergyBitmap();
+
         void ExportToFile(FileTypeEnum type, string fileName);
         void ImportFromFile(FileTypeEnum type, string fileName);
         void AddInclusions(ConfigurationInclusions config);
-        void SeedGrains(int numberOfGrains);
         Configuration GetConfiguration();
         bool IsMapEmpty();
 
@@ -30,6 +31,9 @@ namespace MultiscaleModelling.Interfaces
         void AddBoundariesForGrains(Configuration config);
         void RemoveGrainsColors();
         float GetGBPercent();
-        void FirstStepMC();
+        void CalculateEnergy();
+
+        void InitializeStep(int numberOfGrains);
+
     }
 }

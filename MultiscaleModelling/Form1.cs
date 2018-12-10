@@ -78,10 +78,8 @@ namespace MultiscaleModelling
             var config = GetConfiguration();
 
             _currentSimullation.Initialize(config);
-            if (!config.IsMC)
-                _currentSimullation.SeedGrains(config.NumberOfGrains);
-            else
-                _currentSimullation.FirstStepMC();
+            _currentSimullation.InitializeStep(config.NumberOfGrains);
+
 
             _isStartedSimulation = true;
         }
@@ -329,9 +327,9 @@ namespace MultiscaleModelling
             _isStartedSimulation = true;
             _grainsSelection = false;
             timer2.Enabled = false;
-            _currentSimullation.StartGenerateSubstructure(config);
 
-            _currentSimullation.SeedGrains(config.NumberOfSubGrains);
+            _currentSimullation.StartGenerateSubstructure(config);
+            _currentSimullation.InitializeStep(config.NumberOfGrains);
 
             ChangeEnableGrowButtons(true);
             RenderStep();
@@ -367,6 +365,25 @@ namespace MultiscaleModelling
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void checkBoxEnergy_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxEnergy.Checked)
+            {
+                var map = _currentSimullation.GetEnergyBitmap();
+                Render(map);
+            }
+            else
+            {
+                var map = _currentSimullation.GetBitmap();
+                Render(map);
+            }
+        }
+
+        private void buttonCalculateEnergy_Click(object sender, EventArgs e)
+        {
+            _currentSimullation.CalculateEnergy();
         }
     }
 }

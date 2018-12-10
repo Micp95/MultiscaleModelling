@@ -126,6 +126,45 @@ namespace MultiscaleModelling.Controllers
             return bitmap;
         }
 
+        private List<Color> GetEnergyColors(Color fColor, Color sColor,int size)
+        {
+
+            int rMax = fColor.R;
+            int rMin = sColor.R;
+            int gMax = fColor.G;
+            int gMin = sColor.G;
+            int bMax = fColor.B;
+            int bMin = sColor.B;
+
+            var colorList = new List<Color>();
+            for (int i = 0; i < size; i++)
+            {
+                var rAverage = rMin + (int)((rMax - rMin) * i / size);
+                var gAverage = gMin + (int)((gMax - gMin) * i / size);
+                var bAverage = bMin + (int)((bMax - bMin) * i / size);
+                colorList.Add(Color.FromArgb(rAverage, gAverage, bAverage));
+            }
+            return colorList;
+        }
+        public Bitmap GetBitmapWithEnergyColors()
+        {
+            var energyColors = GetEnergyColors(Color.Yellow, Color.Blue,101);
+            Bitmap bitmap = new Bitmap(_width, _height);
+            for (int x = 0; x < _width; x++)
+            {
+                for (int y = 0; y < _height; y++)
+                {
+                    var node = _previousMap.GetNode(x, y);
+                    var energy = node.H / 7.0 * 100;
+                    
+                    if(node.Type == TypeEnum.Border)
+                        bitmap.SetPixel(x, y, _previousMap.GetNode(x, y).Color);
+                    else
+                        bitmap.SetPixel(x, y, energyColors[(int)energy]);
+                }
+            }
+            return bitmap;
+        }
         public void ImportFromFile(string name,FileTypeEnum type)
         {
             var mapper = GetColorMapper();

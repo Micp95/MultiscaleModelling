@@ -14,5 +14,6 @@ namespace MultiscaleModelling.Models
         public int X { get; set; }
         public int Y { get; set; }
         public int Id { get; set; }
+        public double H { get; set; }
     }
 }
