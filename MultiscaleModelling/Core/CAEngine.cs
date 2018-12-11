@@ -15,17 +15,16 @@ namespace MultiscaleModelling.Core
         private SimulationEngine _simulationEngine;
         private Random _random;
 
-
         public CAEngine(Random random, SimulationEngine simulationEngine)
         {
             _random = random;
             _simulationEngine = simulationEngine;
         }
 
-        public void InitializeStep(int numberOfGrains)
+        public void InitializeStep()
         {
             //seed grains
-            int grainsToGenerate = numberOfGrains;
+            int grainsToGenerate = _simulationEngine.Configuration.NumberOfGrains;
             while (grainsToGenerate > 0)
             {
                 var grain = _simulationEngine.GetRandomGrain();
@@ -39,7 +38,6 @@ namespace MultiscaleModelling.Core
 
             _simulationEngine.GenerateListOfGrains();
         }
-
         public void NextStep()
         {
 
@@ -60,8 +58,6 @@ namespace MultiscaleModelling.Core
                 _simulationEngine.EndSubstructureSimulation();
             }
         }
-
-
 
         private void AddGrainToRandomPosition(Grain grain)
         {
@@ -86,9 +82,6 @@ namespace MultiscaleModelling.Core
 
             _simulationEngine.MapController.SetNode(x, y, node);
         }
-
-
-
         private void ProcessCoordinate(int x, int y)
         {
             var node = _simulationEngine.MapController.GetNode(x, y);
@@ -110,10 +103,6 @@ namespace MultiscaleModelling.Core
                 Type = node.Type
             });
         }
-
-
-
-
         private Node GetNodeForCA(Node node, NeighbourhoodEnum type)
         {
             switch (type)
@@ -126,7 +115,6 @@ namespace MultiscaleModelling.Core
             }
             return null;
         }
-
         private Node GetNodeforStandardMethod(Node node)
         {
             var neighbourhood = _simulationEngine.MapController.GetNeighbourhoods(node.X, node.Y, _simulationEngine.Configuration.Neighbourhood);
@@ -145,7 +133,6 @@ namespace MultiscaleModelling.Core
 
             return node;
         }
-
         private Node GetNodeforModificationMethod(Node node)
         {
             var mooreNeighbourhood = GetListOfGrainNeighbourhood(node, NeighbourhoodEnum.Moore);
@@ -178,9 +165,6 @@ namespace MultiscaleModelling.Core
 
             return node;
         }
-
-
-
         private List<KeyValuePair<Node, int>> GetListOfGrainNeighbourhood(Node node, NeighbourhoodEnum type)
         {
             var neighbourhood = _simulationEngine.MapController.GetNeighbourhoods(node.X, node.Y, type);
@@ -194,7 +178,6 @@ namespace MultiscaleModelling.Core
             }
             return null;
         }
-
 
     }
 }

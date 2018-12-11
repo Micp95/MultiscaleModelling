@@ -39,7 +39,7 @@ namespace MultiscaleModelling.Core
             _currentGrainId = 100;
         }
 
-        public void AddOrRemoveGrainsToSelectLis(int x, int y)
+        public void AddOrRemoveGrainsInSelectList(int x, int y)
         {
             var node = _mapController.GetNode(x, y);
             if (node.Id > 100)
@@ -241,7 +241,10 @@ namespace MultiscaleModelling.Core
                     for (int y = 1; y <= _configuration.Height; y++)
                     {
                         var node = _mapController.GetNode(x, y);
-                        node.H = GetRandomEnergy(5, 7, 10);
+                        if (node.Type == TypeEnum.Grain)
+                            node.H = GetRandomEnergy(_configuration.BorderEnergy - _configuration.GrainEnergy, _configuration.BorderEnergy, 10);
+                        else
+                            node.H = 0;
                     }
                 }
             }
@@ -253,7 +256,10 @@ namespace MultiscaleModelling.Core
                     {
                         var node = _mapController.GetNode(x, y);
                         var isMoreEnergy = heighterEnergy.Any(k => k.X == x && k.Y == y);
-                        node.H = isMoreEnergy ? GetRandomEnergy(7, 7, 10) : GetRandomEnergy(2, 7, 10);
+                        if (node.Type == TypeEnum.Grain)
+                            node.H = isMoreEnergy ? GetRandomEnergy(_configuration.BorderEnergy, _configuration.BorderEnergy, 10) : GetRandomEnergy(_configuration.GrainEnergy, _configuration.BorderEnergy, 10);
+                        else
+                            node.H = 0;
                     }
                 }
             }

@@ -57,9 +57,9 @@ namespace MultiscaleModelling.Simulation
             _simulationEngine.Restart();
         }
 
-        public void InitializeStep(int numberOfGrains)
+        public void InitializeStep()
         {
-            _processEngine.InitializeStep(numberOfGrains);
+            _processEngine.InitializeStep();
         }
 
         public bool IsMapEmpty()
@@ -94,7 +94,7 @@ namespace MultiscaleModelling.Simulation
 
         public void AddOrRemoveGrainsToSelectLis(int x, int y)
         {
-            _simulationEngine.AddOrRemoveGrainsToSelectLis(x, y);
+            _simulationEngine.AddOrRemoveGrainsInSelectList(x, y);
         }
 
         public void StartGenerateSubstructure(Configuration config)
@@ -146,7 +146,9 @@ namespace MultiscaleModelling.Simulation
 
         private void SetProcessEngine()
         {
-            if (_simulationEngine.Configuration.IsMC)
+            if (_simulationEngine.Configuration.IsRecrystallization)
+                _processEngine = _recrystallizationEngine;
+            else if (_simulationEngine.Configuration.IsMC)
                 _processEngine = _MCEngine;
             else
                 _processEngine = _CAEngine;

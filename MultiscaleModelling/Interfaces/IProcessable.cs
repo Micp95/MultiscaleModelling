@@ -9,6 +9,6 @@ namespace MultiscaleModelling.Interfaces
     interface IProcessable
     {
         void NextStep();
-        void InitializeStep(int numberOfGrains);
+        void InitializeStep();
     }
 }

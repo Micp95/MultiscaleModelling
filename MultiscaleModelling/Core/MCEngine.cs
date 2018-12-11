@@ -16,19 +16,17 @@ namespace MultiscaleModelling.Core
         private Random _random;
         private int _currentMCIteration;
 
-
-
         public MCEngine(Random random, SimulationEngine simulationEngine)
         {
             _random = random;
             _simulationEngine = simulationEngine;
         }
 
-        public void InitializeStep(int numberOfGrains)
+        public void InitializeStep()
         {
             _simulationEngine.MapController.CopyMap();
             _simulationEngine.Grains = new List<Grain>();
-            int grainsToGenerate = numberOfGrains;
+            int grainsToGenerate = _simulationEngine.Configuration.NumberOfGrains;
             while (grainsToGenerate > 0)
             {
                 var grain = _simulationEngine.GetRandomGrain();
@@ -62,8 +60,6 @@ namespace MultiscaleModelling.Core
             _currentMCIteration = _simulationEngine.Configuration.MCIterations - 1;
             _simulationEngine.GenerateListOfGrains();
         }
-
-
         public void NextStep()
         {
 
@@ -100,9 +96,6 @@ namespace MultiscaleModelling.Core
             }
         }
 
-
-
-
         private void ProcessCoordinateMonteCarlo(int x, int y)
         {
             var neighbourhoodType = _simulationEngine.Configuration.Neighbourhood == NeighbourhoodEnum.Moore2 ? NeighbourhoodEnum.Moore : _simulationEngine.Configuration.Neighbourhood;
@@ -136,14 +129,11 @@ namespace MultiscaleModelling.Core
                 _simulationEngine.MapController.SetNode(x, y, nodeXd);
             }
         }
-
         private double GetEnrgy(int id, int x, int y, List<Node> neighbourhoods)
         {
             int countOfOthers = neighbourhoods.Count(k => k.Id != id);
 
             return _simulationEngine.Configuration.J * (double)countOfOthers;
         }
-
-
     }
 }

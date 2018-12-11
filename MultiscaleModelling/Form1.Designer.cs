@@ -93,7 +93,7 @@
             this.label22 = new System.Windows.Forms.Label();
             this.numericUpDownRecIterations = new System.Windows.Forms.NumericUpDown();
             this.label23 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonRecrystallization = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioButtonAny = new System.Windows.Forms.RadioButton();
             this.radioButtonGB = new System.Windows.Forms.RadioButton();
@@ -235,7 +235,7 @@
             this.numericUpDownWidth.Size = new System.Drawing.Size(126, 20);
             this.numericUpDownWidth.TabIndex = 12;
             this.numericUpDownWidth.Value = new decimal(new int[] {
-            300,
+            100,
             0,
             0,
             0});
@@ -257,7 +257,7 @@
             this.numericUpDownHeight.Size = new System.Drawing.Size(126, 20);
             this.numericUpDownHeight.TabIndex = 13;
             this.numericUpDownHeight.Value = new decimal(new int[] {
-            300,
+            100,
             0,
             0,
             0});
@@ -284,10 +284,11 @@
             this.numericUpDownNumberOfGrain.Size = new System.Drawing.Size(126, 20);
             this.numericUpDownNumberOfGrain.TabIndex = 15;
             this.numericUpDownNumberOfGrain.Value = new decimal(new int[] {
-            10,
+            5,
             0,
             0,
             0});
+            this.numericUpDownNumberOfGrain.ValueChanged += new System.EventHandler(this.numericUpDownNumberOfGrain_ValueChanged);
             // 
             // label5
             // 
@@ -739,7 +740,7 @@
             this.numericUpDownMCIterations.Size = new System.Drawing.Size(126, 20);
             this.numericUpDownMCIterations.TabIndex = 48;
             this.numericUpDownMCIterations.Value = new decimal(new int[] {
-            10,
+            100,
             0,
             0,
             0});
@@ -868,14 +869,15 @@
             this.label23.TabIndex = 56;
             this.label23.Text = "Interations";
             // 
-            // button1
+            // buttonRecrystallization
             // 
-            this.button1.Location = new System.Drawing.Point(334, 482);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(242, 25);
-            this.button1.TabIndex = 58;
-            this.button1.Text = "Recrystallization";
-            this.button1.UseVisualStyleBackColor = true;
+            this.buttonRecrystallization.Location = new System.Drawing.Point(334, 482);
+            this.buttonRecrystallization.Name = "buttonRecrystallization";
+            this.buttonRecrystallization.Size = new System.Drawing.Size(242, 25);
+            this.buttonRecrystallization.TabIndex = 58;
+            this.buttonRecrystallization.Text = "Recrystallization";
+            this.buttonRecrystallization.UseVisualStyleBackColor = true;
+            this.buttonRecrystallization.Click += new System.EventHandler(this.buttonRecrystallization_Click);
             // 
             // groupBox2
             // 
@@ -949,7 +951,7 @@
             this.Controls.Add(this.numericUpDownTotalNucleons);
             this.Controls.Add(this.label24);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonRecrystallization);
             this.Controls.Add(this.numericUpDownRecIterations);
             this.Controls.Add(this.label23);
             this.Controls.Add(this.comboBoxNucleationType);
@@ -1101,7 +1103,7 @@
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.NumericUpDown numericUpDownRecIterations;
         private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonRecrystallization;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton radioButtonAny;
         private System.Windows.Forms.RadioButton radioButtonGB;

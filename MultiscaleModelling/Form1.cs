@@ -23,9 +23,10 @@ namespace MultiscaleModelling
             InitializeComponent();
 
             comboBoxBC.SelectedIndex = 0;
-            comboBoxNeighbourhood.SelectedIndex = 0;
+            comboBoxNeighbourhood.SelectedIndex = 1;
             comboBoxTypeOfInclusion.SelectedIndex = 0;
             comboBoxStructureType.SelectedIndex = 0;
+            comboBoxNucleationType.SelectedIndex = 0;
             _isStartedSimulation = false;
 
             _currentSimullation = new StandardSimulation();
@@ -36,6 +37,7 @@ namespace MultiscaleModelling
 
             exportToolStripMenuItem.Enabled = false;
             radioButtonAC.Select();
+            radioButtonGB.Select();
         }
 
         private Configuration GetConfiguration()
@@ -54,7 +56,18 @@ namespace MultiscaleModelling
                 SizeOfGB = (int)numericUpDownGBSize.Value,
                 IsMC = radioButtonMC.Checked,
                 J = (double)numericUpDownJ.Value,
-                MCIterations = (int)numericUpDownMCIterations.Value
+                MCIterations = (int)numericUpDownMCIterations.Value,
+                ConfigurationRecrystallization = new ConfigurationRecrystallization()
+                {
+                    Iterations = (int)numericUpDownRecIterations.Value,
+                    J = (double)numericUpDownJ.Value,
+                    NucleonsType=(NucleonsType)comboBoxNucleationType.SelectedIndex,
+                    NumberOfStates=(int)numericUpDownRecrStates.Value,
+                    OnlyGBGeneration = radioButtonGB.Checked,
+                    TotalNucleons = (int)numericUpDownTotalNucleons.Value
+                },
+                BorderEnergy = 7,
+                GrainEnergy = 2
             };
         }
 
@@ -78,7 +91,7 @@ namespace MultiscaleModelling
             var config = GetConfiguration();
 
             _currentSimullation.Initialize(config);
-            _currentSimullation.InitializeStep(config.NumberOfGrains);
+            _currentSimullation.InitializeStep();
 
 
             _isStartedSimulation = true;
@@ -329,7 +342,7 @@ namespace MultiscaleModelling
             timer2.Enabled = false;
 
             _currentSimullation.StartGenerateSubstructure(config);
-            _currentSimullation.InitializeStep(config.NumberOfGrains);
+            _currentSimullation.InitializeStep();
 
             ChangeEnableGrowButtons(true);
             RenderStep();
@@ -384,6 +397,27 @@ namespace MultiscaleModelling
         private void buttonCalculateEnergy_Click(object sender, EventArgs e)
         {
             _currentSimullation.CalculateEnergy();
+        }
+
+        private void buttonRecrystallization_Click(object sender, EventArgs e)
+        {
+            var config = GetConfiguration();
+            _isStartedSimulation = true;
+            _grainsSelection = false;
+            timer2.Enabled = false;
+
+            ChangeEnableGrowButtons(true);
+            config.IsRecrystallization = true;
+
+            _currentSimullation.Initialize(config);
+            _currentSimullation.InitializeStep();
+
+            RenderStep();
+        }
+
+        private void numericUpDownNumberOfGrain_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

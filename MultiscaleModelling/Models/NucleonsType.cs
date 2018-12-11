@@ -8,8 +8,8 @@ namespace MultiscaleModelling.Models
 {
     public enum NucleonsType
     {
-        Constant,
-        Increasing,
-        BeginOfSimulation
+        Constant = 0,
+        Increasing = 1,
+        BeginOfSimulation =2
     }
 }

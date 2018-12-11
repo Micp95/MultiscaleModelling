@@ -15,6 +15,7 @@ namespace MultiscaleModelling.Controllers
         private static Color _emptyColor = Color.White;
         private static Color _inclusionColor = Color.Black;
         private static Color _borderGraintColor = Color.Black;
+        private static Color _recrystalizationColor = Color.Red;
 
         private int _width;
         private int _height;
@@ -159,6 +160,8 @@ namespace MultiscaleModelling.Controllers
                     
                     if(node.Type == TypeEnum.Border)
                         bitmap.SetPixel(x, y, _previousMap.GetNode(x, y).Color);
+                    else if (node.Type == TypeEnum.Recrystallization)
+                        bitmap.SetPixel(x, y, _recrystalizationColor);
                     else
                         bitmap.SetPixel(x, y, energyColors[(int)energy]);
                 }

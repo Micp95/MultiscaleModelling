@@ -33,7 +33,7 @@ namespace MultiscaleModelling.Interfaces
         float GetGBPercent();
         void CalculateEnergy();
 
-        void InitializeStep(int numberOfGrains);
+        void InitializeStep();
 
     }
 }
